@@ -1,0 +1,27 @@
+.status {
+  display: flex;
+  align-items: center;
+  height: to-rem(25px);
+  border-radius: 4px;
+
+  font-size: to-rem(10px);
+  font-weight: 700;
+
+  &.status--active {
+    background: #d3f4ce;
+
+    color: #4f8172;
+  }
+
+  &.status--inactive {
+    background: #f4d9ce;
+
+    color: #814f4f;
+  }
+
+  &.status--waiting {
+    background-color: #fdf3cc;
+
+    color: #694912;
+  }
+}

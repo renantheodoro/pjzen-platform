@@ -1,0 +1,141 @@
+.table-section {
+  padding: to-rem(27px) to-rem(32px) to-rem(23px);
+  &.table-section--client {
+    .status {
+      padding: to-rem(6px) to-rem(42px);
+      width: 115px;
+    }
+
+    .table-section__body .table-section__table tbody td {
+      &:nth-child(1) {
+        padding-right: to-rem(92px);
+
+        padding-top: to-rem(22px);
+      }
+
+      &:nth-child(2) {
+        padding-right: to-rem(48px);
+      }
+
+      &:nth-child(3) {
+        padding-right: to-rem(33px);
+      }
+
+      &:nth-child(4) {
+        padding-right: to-rem(60px);
+      }
+    }
+  }
+
+  &.table-section--taker {
+    .status {
+      padding: to-rem(6px) to-rem(8px);
+      text-align: center;
+      justify-content: center;
+      width: 158px;
+    }
+
+    .table-section__body .table-section__table tbody td {
+      &:nth-child(1) {
+        padding-right: to-rem(57px);
+
+        padding-top: to-rem(22px);
+      }
+
+      &:nth-child(2) {
+        padding-right: to-rem(48px);
+      }
+
+      &:nth-child(3) {
+        padding-right: to-rem(44px);
+      }
+    }
+  }
+
+  .table-section__header {
+    margin-bottom: to-rem(35px);
+
+    h2 {
+      margin-bottom: to-rem(14px);
+    }
+
+    .button__icon--left-side {
+      margin-left: 1rem;
+    }
+  }
+
+  .table-section__body {
+    .table-section__table {
+      width: 100%;
+      margin-top: 1rem;
+
+      .input-field {
+        margin-bottom: 0;
+      }
+
+      thead th {
+        font-size: to-rem(10px);
+        font-weight: 700;
+        color: palette("text", "light");
+
+        text-align: left;
+
+        padding: to-rem(8px) 0;
+
+        border-bottom: 1px solid #d6d6d6;
+      }
+
+      tbody td {
+        color: palette("text", "light");
+
+        font-size: to-rem(12px);
+        font-weight: 400;
+
+        padding: to-rem(12px) 0;
+
+        border-bottom: 1px solid #eee;
+      }
+    }
+  }
+
+  .table-section__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    padding-top: to-rem(10px);
+
+    .table-section__pagination__pages {
+      color: palette("form", "checkbox");
+
+      font-size: to-rem(12px);
+      font-weight: 400;
+
+      margin-right: to-rem(28px);
+    }
+
+    .table-section__pagination__buttons {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      a {
+        width: to-rem(25px);
+        height: to-rem(25px);
+
+        border-radius: 50%;
+        background-color: palette("text", "light-blue");
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin-right: to-rem(18px);
+
+        &:last-of-type {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}
