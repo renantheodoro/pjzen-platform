@@ -1,0 +1,255 @@
+// -----------------------------------------------------------------------------
+// This file contains all application-wide Sass functions.
+// -----------------------------------------------------------------------------
+
+/// Native `url(..)` function wrapper
+/// @group helpers
+/// @param {String} $base - base URL for the asset
+/// @param {String} $type - asset type folder (e.g. `fonts/`)
+/// @param {String} $path - asset path
+/// @return {Url}
+
+@use "sass:math";
+
+@function asset($base, $type, $path) {
+    @return url('#{$base}#{$type}#{$path}');
+}
+
+/// Returns URL to an image based on its path
+/// @group helpers
+/// @param {String} $path - image path
+/// @param {String} $base [$base-url] - base URL
+/// @return {Url}
+/// @require {variable} $base-url
+@function image($path, $base: $base-url) {
+    @return asset($base, 'img/', $path);
+}
+
+/// Returns URL to a font based on its path
+/// @group helpers
+/// @param {String} $path - font path
+/// @param {String} $base [$base-url] - base URL
+/// @return {Url}
+/// @require {variable} $base-url
+@function font($path, $base: $base-url) {
+    @return asset($base, 'ff/', $path);
+}
+
+/// Convert font weights names to numbers. Names can be any case,
+/// dash or separated separated or not separated at all.
+///
+/// @access public
+/// @author Sobral
+/// @group helpers
+/// @param {String} $weight - Weight name
+/// @return {Number}
+/// @link https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight?v=control#Common_weight_name_mapping
+///
+/// @example scss
+/// h1 {
+/// 	font-weight: font-weight('medium');
+/// }
+@function font-weight($weight: 'normal') {
+    $default-weights: (
+        'thin': 100,
+        'hairline': 100,
+        'extralight': 200,
+        'extra light': 200,
+        'extra-light': 200,
+        'ultralight': 200,
+        'ultra light': 200,
+        'ultra-light': 200,
+        'light': 300,
+        'normal': 400,
+        'medium': 500,
+        'semibold': 600,
+        'semi bold': 600,
+        'semi-bold': 600,
+        'demibold': 600,
+        'demi bold': 600,
+        'demi-bold': 600,
+        'bold': 700,
+        'extrabold': 800,
+        'extra bold': 800,
+        'extra-bold': 800,
+        'ultrabold': 800,
+        'ultra bold': 800,
+        'ultra-bold': 800,
+        'black': 900,
+        'heavy': 900,
+    );
+
+    $weight: to-lower-case($weight);
+
+    @if variable-exists('font-weights') and type-of($font-weights) == 'map' {
+        $default-weights: map-merge($default-weights, $font-weights);
+    }
+
+    @if not map-has-key($default-weights, $weight) {
+        @error 'unknown value sent to `font-weight` function-> #{$weight}.';
+    }
+
+    @return map-get($default-weights, $weight);
+}
+
+/// Get a z-index value from a layer name
+///
+/// @access public
+/// @group helpers
+/// @param {String} $layer - Layer’s name
+/// @require {variable} $layers
+/// @return {Number}
+///
+/// @example scss
+/// 	dialog[open] {
+/// 		z-index: layer('modal');
+/// 	}
+@function layer($layer: 'default') {
+    // sass-lint:disable-block indentation
+    $default-layers: (
+        'modal': 5000,
+        'dropdown': 4000,
+        'default': 1,
+        'below': -1,
+    );
+
+    @if variable-exists('layers') and type-of($layers) == 'map' {
+        $default-layers: map-merge($default-layers, $layers);
+    }
+
+    @if not map-has-key($default-layers, $layer) {
+        @error 'unknown value sent to `layer` function-> #{$layer}. Availabe values-> `#{map-keys($default-layers)}`';
+    }
+
+    @return map-get($default-layers, $layer);
+}
+
+/// Helper function to use organized colors and tones
+///
+/// @access public
+/// @group helpers
+/// @param {String} $color-name - Color name
+/// @param {String} $tone ['base'] - Tone name
+/// @require {variable} $palette
+/// @return {color}
+/// @link http://erskinedesign.com/blog/friendlier-colour-names-sass-maps/
+///
+/// @example scss
+/// 	a {
+/// 		color: palette('anchor');
+///
+/// 		&:hover {
+/// 			color: palette('anchor', 'hover');
+/// 		}
+/// 	}
+@function palette($color-name, $tone: null) {
+    $color: transparent;
+
+    $default-palette: (
+        'white': rgb(255, 255, 255),
+        'black': rgb(0, 0, 0),
+    );
+
+    @if variable-exists('palette') and type-of($palette) == 'map' {
+        $default-palette: map-merge($default-palette, $palette);
+    }
+
+    @if map-has-key($default-palette, $color-name) {
+        $color: map-get($default-palette, $color-name);
+    } @else {
+        @error 'unknown color sent to `palette` function-> `#{$color-name}`. Available colors-> `#{map-keys($default-palette)}`';
+    }
+
+    @if $tone != null {
+        @if type-of($color) == 'color' or $color == 'transparent' {
+            @error 'unknown tone sent to `palette` function-> `#{$tone}`. There is only one tone available for color `#{$color-name}`-> `#{$color}`';
+        } @else if not map-has-key($color, $tone) {
+            @error 'unknown tone sent to `palette` function-> `#{$tone}`. Available tones for `#{$color-name}`-> `#{map-keys($color)}`';
+        } @else {
+            @return map-get(map-get($default-palette, $color-name), $tone);
+        }
+    } @else {
+        @if type-of($color) == 'color' or $color == 'transparent' {
+            @return $color;
+        } @else if type-of($color) == 'map' and not map-has-key($color, 'base') {
+            @error 'color `#{$color}` misses `base` tone';
+        } @else {
+            @return map-get($color, 'base');
+        }
+    }
+}
+
+/// Trims a string by removing leading and trailing spaces
+///
+/// @group helpers
+/// @param {String} $string - String to trim
+/// @return {String} - String without spaces
+///
+@function trim($string) {
+    @return str-slice($string, _first-index($string, 'left'), _first-index($string, 'right'));
+}
+
+/// Find first char which is not a space
+///
+/// @param {String} $string - String to search
+/// @param {String} $direction ['left'] - Either 'left' or 'right' to indicate search direction
+/// @access private
+/// @return {Number} - Index of first non-space character
+///
+@function _first-index($string, $direction: 'left') {
+    @for $i from 1 through str-length($string) {
+        $index: if($direction == 'left', $i, -$i);
+
+        @if str-slice($string, $index, $index) != ' ' {
+            @return $index;
+        }
+    }
+
+    @return 0;
+}
+
+/// Get a length value from a breakpoint name
+///
+/// @access public
+/// @group helpers
+/// @param {String} $breakpoint - breakpoint’s name
+/// @require {variable} $breakpoints
+/// @return {Number}
+///
+/// @example scss
+///
+
+@function breakpoint($breakpoint: null) {
+    $default-breakpoints: (
+        'phone': 20em,
+        // 320px,
+        'tablet': 48em,
+        // 768px,
+        'desktop': 64em,
+        // 1024px,
+    );
+
+    @if $breakpoint == null {
+        @error 'A breakpoint name is required. Availabe values-> `#{map-keys($default-breakpoints)}`';
+    }
+
+    @if variable-exists('breakpoints') and type-of($breakpoints) == 'map' {
+        $default-breakpoints: map-merge($default-breakpoints, $breakpoints);
+    }
+
+    @if not map-has-key($default-breakpoints, $breakpoint) {
+        @error 'unknown value sent to `breakpoint` function-> #{$breakpoint}. Availabe values-> `#{map-keys($default-breakpoints)}`';
+    }
+
+    @return map-get($default-breakpoints, $breakpoint);
+}
+
+@function to-em($size) {
+    $emSize: $size / 16px;
+    @return #{$emSize}em;
+}
+
+@function to-rem($size) {
+    $remSize: $size / 16px;
+    @return #{$remSize}rem;
+}

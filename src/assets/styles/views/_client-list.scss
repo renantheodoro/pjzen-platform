@@ -1,0 +1,17 @@
+.view--client-list {
+  .view--client-list__header {
+    padding: to-rem(8px) to-rem(20px);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: to-rem(510px);
+
+    margin-bottom: to-rem(18px);
+
+    .profile-image {
+      margin-right: to-rem(26px);
+    }
+  }
+}

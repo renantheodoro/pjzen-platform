@@ -1,0 +1,70 @@
+/// @access private
+/// @prop {string} color - Pure colors or a map of tones
+/// @prop {color | map} color.tone - Pure colors or returned color value of functions
+/// @require {function} palette
+
+$palette: (
+  // Base colors
+  "white":
+    (
+      "base": #fff,
+    ),
+  "black": (
+    "base": #000,
+  ),
+  "blue": (
+    "base": #4380e5,
+  ),
+  "purple": (
+    "base": #5956fe,
+  ),
+  "orange": (
+    "base": #ee783c,
+  ),
+  "red": (
+    "base": #e90404,
+  ),
+  "primary": (
+    "base": #4380e5,
+  ),
+  "link": (
+    "base": #4380e5,
+  ),
+  "text": (
+    "base": #353535,
+    "light": #4b4b4b,
+    "extra-light": #949494,
+    "blue": #3782ef,
+    "light-blue": #bcceec,
+  ),
+  "background": (
+    "base": #eeeeee,
+    "sidebar": #fbfbfb,
+  ),
+  "button": (
+    "primary": #4380e5,
+    "primary-dark": #295aaa,
+    "primary-hover": #004fc2,
+    "orange": #ee783c,
+    "orange-hover": #a53800,
+    "blue": #3782ef,
+    "blue-hover": #004fc2,
+    "blue-dark": #2b66bd,
+    "blue-dark-hover": #002459,
+    "blue-darkest": #3b5170,
+    "blue-darkest-hover": #051224,
+  ),
+  "icon": (
+    "background": #d9edf8,
+  ),
+  "error": (
+    "base": #db0000,
+  ),
+  "form": (
+    "label": #3d3d3d,
+    "placeholder": #828282,
+    "placeholder-darkened": #979797,
+    "darkened": #eeeeee,
+    "checkbox": #686868,
+  )
+);

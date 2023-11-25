@@ -1,0 +1,36 @@
+/* Redonda */
+@font-face {
+  src: local("Redonda-Light"), url("@/assets/fonts/redonda/Redonda-Light.otf");
+  font-style: normal;
+  font-weight: 100;
+  font-family: "Redonda";
+}
+
+@font-face {
+  src: local("Redonda-Regular"),
+    url("@/assets/fonts/redonda/Redonda-Regular.otf");
+  font-style: normal;
+  font-weight: 400;
+  font-family: "Redonda";
+}
+
+// @font-face {
+//   src: local("Redonda-Medium"), url("@/assets/fonts/redonda/Redonda-Medium.otf");
+//   font-style: normal;
+//   font-weight: 600;
+//   font-family: "Redonda";
+// }
+
+@font-face {
+  src: local("Redonda-Bold"), url("@/assets/fonts/redonda/Redonda-Bold.otf");
+  font-style: normal;
+  font-weight: 700;
+  font-family: "Redonda";
+}
+
+@font-face {
+  src: local("Redonda-Black"), url("@/assets/fonts/redonda/Redonda-Black.otf");
+  font-style: normal;
+  font-weight: 800;
+  font-family: "Redonda";
+}

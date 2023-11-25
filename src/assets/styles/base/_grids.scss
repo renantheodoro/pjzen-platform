@@ -1,0 +1,300 @@
+.grid {
+  &::after,
+  &:root::before {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    z-index: layer("modal");
+
+    font-size: 1rem;
+
+    pointer-events: none;
+
+    content: "breakpoint: phone";
+  }
+
+  &::after {
+    bottom: 0;
+    left: 0;
+
+    background-image: grid-image-mobile(4);
+    background-position: center top;
+
+    content: "";
+
+    @media screen and (min-width: breakpoint("phablet")) {
+      background-image: grid-image-mobile(4);
+    }
+
+    @media screen and (min-width: breakpoint("tablet")) {
+      background-image: grid-image-mobile(4);
+    }
+
+    @media screen and (min-width: breakpoint("desktop")) {
+      background-image: grid-image(12);
+      background-size: $max-width 100%;
+    }
+
+    @media screen and (min-width: breakpoint("wide")) {
+      background-image: grid-image(12);
+      background-size: $max-width 100%;
+    }
+  }
+
+  &:root::before {
+    padding: $gutter;
+
+    background-color: palette("black", "base");
+
+    opacity: 0.75;
+
+    @media screen and (min-width: breakpoint("phablet")) {
+      content: "breakpoint: phablet";
+    }
+
+    @media screen and (min-width: breakpoint("tablet")) {
+      content: "breakpoint: tablet";
+    }
+
+    @media screen and (min-width: breakpoint("desktop")) {
+      content: "breakpoint: desktop";
+    }
+
+    @media screen and (min-width: breakpoint("wide")) {
+      content: "breakpoint: wide";
+    }
+  }
+}
+
+.grid-row-gap {
+  display: grid;
+
+  grid-template-rows: auto;
+
+  width: 100%;
+
+  row-gap: to-rem(16px);
+
+  @media screen and (min-width: breakpoint("desktop")) {
+    row-gap: to-rem(24px);
+  }
+}
+
+/* Grid style */
+
+.content__row {
+  @include box-wrap;
+}
+
+.content__row--space-between {
+  justify-content: space-between;
+}
+
+.content__row--align-center {
+  align-items: center;
+}
+
+.justify-content--center {
+  justify-content: center !important;
+}
+
+.content__row--center {
+  justify-content: center;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.content__row--flex-end {
+  justify-content: flex-end;
+}
+
+.content__row--flex-start {
+  justify-content: flex-start;
+}
+
+.mobile_container {
+  @media screen and (max-width: breakpoint("tablet")) {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 2rem;
+    margin: 0;
+  }
+}
+
+.mobile_container.mobile__container--1rem {
+  @media screen and (max-width: breakpoint("tablet")) {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 1rem;
+    margin: 0;
+  }
+}
+
+.row--form {
+  padding-bottom: $leading * 0.5rem;
+
+  @media screen and (min-width: breakpoint("desktop")) {
+    padding-bottom: $leading * 0.5rem;
+  }
+
+  &:last-of-type,
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.content__column {
+  @include box-item;
+
+  width: 100%;
+
+  padding-bottom: to-rem(24px);
+
+  &:last-of-type {
+    padding-bottom: 0;
+  }
+
+  @media screen and (min-width: breakpoint("max-desktop")) {
+    padding-bottom: 0;
+  }
+}
+
+.content__row--form .content__column {
+  padding-bottom: to-rem(16px);
+
+  @media screen and (min-width: breakpoint("max-desktop")) {
+    padding-bottom: 0;
+  }
+}
+
+$column-quantity: 4;
+$column-quantity-desktop: 12;
+
+@for $i from 1 through $column-quantity {
+  .column--#{$i} {
+    width: calc(100% / #{$column-quantity} * #{$i});
+  }
+}
+
+@for $i from 1 through $column-quantity-desktop {
+  @media screen and (min-width: breakpoint("tablet")) {
+    .column-tablet--#{$i} {
+      width: calc(100% / #{$column-quantity-desktop} * #{$i});
+    }
+  }
+}
+
+@media screen and (min-width: breakpoint("desktop")) {
+  @for $i from 1 through $column-quantity-desktop {
+    .column-desktop--#{$i} {
+      width: calc(100% / #{$column-quantity-desktop} * #{$i});
+    }
+  }
+}
+
+@media screen and (min-width: breakpoint("wide")) {
+  @for $i from 1 through $column-quantity-desktop {
+    .column-wide--#{$i} {
+      width: calc(100% / #{$column-quantity-desktop} * #{$i});
+    }
+  }
+}
+
+.content__row.content__row--reverse-even:nth-of-type(even) {
+  .content__column:nth-of-type(even) {
+    @media screen and (min-width: breakpoint("desktop")) {
+      order: -1;
+    }
+  }
+}
+
+.content__row.content__row--reverse-odd:nth-of-type(odd) {
+  .content__column:nth-of-type(even) {
+    @media screen and (min-width: breakpoint("desktop")) {
+      order: -1;
+    }
+  }
+}
+
+.content__row--form {
+  padding-bottom: 0;
+
+  @media screen and (min-width: breakpoint("desktop")) {
+    padding-bottom: $leading * 0.5rem;
+  }
+
+  &:last-of-type,
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.one-column {
+  display: grid;
+
+  width: 100%;
+
+  grid-template-rows: auto;
+  row-gap: to-rem(24px);
+}
+
+.two-columns {
+  display: grid;
+
+  width: 100%;
+
+  grid-template-rows: auto;
+  row-gap: to-rem(24px);
+
+  @media screen and (min-width: breakpoint("tablet")) {
+    grid-template-columns: 1fr 1fr;
+
+    column-gap: to-rem(24px);
+
+    row-gap: to-rem(32px);
+  }
+}
+
+.three-columns {
+  display: grid;
+
+  width: 100%;
+
+  grid-template-rows: auto;
+  row-gap: to-rem(24px);
+
+  @media screen and (min-width: breakpoint("tablet")) {
+    grid-template-columns: 1fr 1fr;
+
+    column-gap: to-rem(24px);
+
+    row-gap: to-rem(32px);
+  }
+
+  @media screen and (min-width: breakpoint("desktop")) {
+    grid-template-columns: 1fr 1fr 1fr;
+
+    column-gap: to-rem(24px);
+
+    row-gap: to-rem(32px);
+  }
+}
+
+.grid-form-row {
+  display: grid;
+
+  width: 100%;
+
+  grid-template-rows: auto;
+  row-gap: to-rem(24px);
+}
+
+/* Container style */
+
+.container {
+  width: 100%;
+  max-width: 100%;
+}
