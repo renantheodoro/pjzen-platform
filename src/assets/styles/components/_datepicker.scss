@@ -1,0 +1,22 @@
+.input-field--datepicker {
+  .v3dp__datepicker {
+    width: 100%;
+
+    input {
+      background-image: url("@/assets/images/icons/calendar.svg") !important;
+      background-position: calc(100% - 12px) center !important;
+      background-repeat: no-repeat !important;
+      background-size: 14px !important;
+    }
+
+    .v3dp__popout[data-v-65eb861b] button:not(:disabled):hover span {
+        background-color: palette("blue");
+    }
+
+    .v3dp__elements[data-v-65eb861b] button.selected span,
+    .v3dp__elements[data-v-65eb861b] button.selected span:hover {
+      outline: none;
+      background-color: palette("blue");
+    }
+  }
+}

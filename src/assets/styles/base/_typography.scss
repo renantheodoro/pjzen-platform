@@ -92,13 +92,6 @@ dt a {
   line-height: to-rem(44px);
 
   font-weight: 700;
-
-  @media screen and (min-width: breakpoint("tablet")) {
-    font-size: to-rem(68px);
-    line-height: to-rem(84px);
-
-    margin-bottom: 1rem;
-  }
 }
 
 @mixin heading-2 {
@@ -116,11 +109,6 @@ dt a {
   font-size: to-rem(14px);
   line-height: to-rem(16px);
   margin-bottom: to-rem(8px);
-
-  @media screen and (min-width: breakpoint("tablet")) {
-    font-size: to-rem(30px);
-    line-height: to-rem(37px);
-  }
 }
 
 @mixin heading-4 {
@@ -128,19 +116,11 @@ dt a {
 
   font-size: to-rem(14px);
   line-height: to-rem(24px);
-
-  @media screen and (min-width: breakpoint("tablet")) {
-    font-size: to-rem(16px);
-  }
 }
 
 @mixin heading-5 {
   font-size: to-rem(12px);
   line-height: to-rem(16px);
-
-  @media screen and (min-width: breakpoint("tablet")) {
-    font-size: to-rem(14px);
-  }
 }
 
 h1,

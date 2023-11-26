@@ -1,20 +1,20 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from "vue";
+import App from "./App.vue";
 import * as VueRouter from "vue-router";
 import routes from "./routes";
 
-// CSS import
+// CSS Libs
 import "./assets/styles/index.scss";
 
 // Route definition
 const router = new VueRouter.createRouter({
-    linkActiveClass: "active",
-    history: VueRouter.createWebHistory(),
-    routes,
-    scrollBehavior() {
-        // always scroll to top
-        return { top: 0 };
-    },
+  linkActiveClass: "active",
+  history: VueRouter.createWebHistory(),
+  routes,
+  scrollBehavior() {
+    // always scroll to top
+    return { top: 0 };
+  },
 });
 
 // App config

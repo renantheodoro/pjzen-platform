@@ -6,9 +6,16 @@
 
   &.profile-image--center {
     margin: 0 auto;
+  }
 
+  &.profile-image--big {
     width: to-rem(90px);
     height: to-rem(90px);
+  }
+
+  &.profile-image--bigger {
+    width: to-rem(178px);
+    height: to-rem(178px);
   }
 
   img {

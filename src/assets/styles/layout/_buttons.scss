@@ -121,6 +121,19 @@
     }
   }
 
+  &:disabled {
+    background-color: #c3c3c3 !important;
+    color: #828282 !important;
+
+    transition: ease 0.3s;
+
+    &:hover {
+      background-color: #c3c3c3 !important;
+      color: #828282 !important;
+      cursor: text;
+    }
+  }
+
   &.button--social {
     border: 1px solid #1c1c1c;
     background: #1c1c1c;

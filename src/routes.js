@@ -1,15 +1,14 @@
-// import Dashboard from "@/views/Dashboard.vue";
+import Dashboard from "@/views/Dashboard.vue";
 import ClientList from "@/views/ClientList.vue";
-import ClientView from "@/views/ClientView.vue";
+import ClientView from "@/components/ClientView.vue";
+import TaxInvoiceIssuance from "@/views/TaxInvoiceIssuance.vue";
 import NotFound from "@/views/NotFound.vue";
 
 export default [
   {
     path: "/",
     name: "dashboard",
-    // TODO: quando houver uma dashboard, é só adicionar o componente aqui
-    // component: Dashboard,
-    component: ClientList,
+    component: Dashboard,
   },
   {
     path: "/lista-de-clientes",
@@ -20,6 +19,11 @@ export default [
     path: "/cliente",
     name: "client",
     component: ClientView,
+  },
+  {
+    path: "/emitir-nota-fiscal",
+    name: "tax-invoice-issuance",
+    component: TaxInvoiceIssuance,
   },
 
   { path: "/:pathMatch(.*)*", name: "not-found", component: NotFound },

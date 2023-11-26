@@ -1,0 +1,43 @@
+<template lang="">
+  <div class="choose-unity">
+    <div
+      @click="select(option1)"
+      class="choose-unity__item"
+      :class="{ selected: optionSelected === option1 }"
+    >
+      {{ option1 }}
+    </div>
+    <div
+      @click="select(option2)"
+      class="choose-unity__item"
+    :class="{ selected: optionSelected === option2 }"
+    >
+      {{ option2 }}
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  name: "app-choose-unity",
+
+  props: {
+    option1: String,
+    option2: String,
+  },
+
+  data() {
+    return {
+      optionSelected: this.option1,
+    };
+  },
+
+  methods: {
+    select(option) {
+      this.optionSelected = option;
+
+      this.$emit("onSelectOption", option);
+    },
+  },
+};
+</script>
+<style lang=""></style>

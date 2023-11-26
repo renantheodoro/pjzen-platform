@@ -1,0 +1,30 @@
+.view--tax-invoice-issuance {
+  .view--tax-invoice-issuance__title {
+    margin-bottom: 0;
+  }
+
+  .step-1 {
+    margin-top: to-rem(38px);
+  }
+
+  .step-2 {
+    margin-top: to-rem(13px);
+
+    .step-2__header {
+        margin-bottom: to-rem(33px);
+
+      h2 {
+        margin-bottom: 0;
+      }
+
+      .status {
+        padding: to-rem(4px) to-rem(12px);
+        margin-left: to-rem(20px);
+      }
+    }
+
+    .back-button {
+      margin-bottom: 12px;
+    }
+  }
+}

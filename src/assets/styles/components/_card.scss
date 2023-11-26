@@ -1,4 +1,10 @@
 .card {
   background-color: palette("white");
   border-radius: to-rem(8px);
+
+  padding: to-rem(28px);
+
+  &.card--blue {
+    background-color: #ecf3ff;
+  }
 }

@@ -111,11 +111,10 @@ main {
           }
 
           .client-details__links {
-
             .client-details__links__block {
               margin-bottom: 1rem;
             }
-            
+
             h3 {
               color: palette("button", "primary-dark");
               font-size: to-rem(12px);
@@ -143,5 +142,41 @@ main {
         padding-left: 1rem;
       }
     }
+  }
+}
+
+.back-button {
+  font-size: to-rem(12px);
+  font-weight: 400;
+  color: palette("blue");
+  line-height: 100%;
+
+  display: block;
+
+  .back-button__icon {
+    margin-right: to-rem(8px);
+  }
+}
+
+.nav-list {
+  display: block;
+
+  max-width: 50%;
+
+  a {
+    display: block;
+
+    margin-bottom: 1rem;
+
+    font-size: to-rem(14px);
+    font-weight: 400;
+    color: palette("blue");
+    line-height: 100%;
+
+    display: block;
+
+    background-color: palette('background', 'sidebar');
+
+    padding: 1rem;
   }
 }
