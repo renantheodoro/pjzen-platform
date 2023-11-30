@@ -1,17 +1,26 @@
 <template lang="">
-  <div class="view view--">
-    <div class="container">
-      <div class="view__row">
-        <div class="view__column view-collumn--sidebar"></div>
-        <div class="view__column view-collumn--content"></div>
-      </div>
-    </div>
+  <div class="view view--company-data">
+    <Internal>
+      
+    </Internal>
   </div>
 </template>
 <script>
+import Internal from "@/components/Internal.vue";
+
 export default {
-  name: "app-",
-  // name: "app-not-found"
+  name: "app-company-data",
+
+  data() {
+    return {
+    };
+  },
+
+  methods: {},
+
+  components: {
+    Internal,
+  },
 };
 </script>
 <style lang=""></style>

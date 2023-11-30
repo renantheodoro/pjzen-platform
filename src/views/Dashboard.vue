@@ -8,6 +8,9 @@
         <router-link :to="{ name: 'tax-invoice-issuance' }"
           >Emitir Nota Fiscal</router-link
         >
+        <router-link :to="{ name: 'company-data' }"
+          >Dados da Empresa</router-link
+        >
       </nav>
     </div>
   </div>

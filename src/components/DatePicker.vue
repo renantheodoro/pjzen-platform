@@ -1,5 +1,11 @@
 <template lang="">
-  <Datepicker v-model="picked" inputFormat="dd/MM/yyyy" :locale="ptBRLocale" />
+  <div class="datepicker-holder width-full" :class="{ 'input--darkened': darkened }">
+    <Datepicker
+      v-model="picked"
+      inputFormat="dd/MM/yyyy"
+      :locale="ptBRLocale"
+    />
+  </div>
 </template>
 <script>
 import Datepicker from "vue3-datepicker";
@@ -9,6 +15,14 @@ import ptBR from "date-fns/locale/pt-BR";
 
 export default {
   name: "app-date-picker",
+
+  props: {
+    darkened: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
 
   data() {
     return {

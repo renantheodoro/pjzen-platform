@@ -229,12 +229,13 @@
   }
 
   input[type="text"].input--darkened,
-  .input-field__select-area__select.input--darkened {
-    background-color: palette("form", "darkened");
-    border: 1px solid #9e9e9e;
+  .input-field__select-area__select.input--darkened,
+  .datepicker-holder.input--darkened input {
+    background-color: palette("form", "darkened") !important;
+    border: 1px solid #9e9e9e !important;
 
     &::placeholder {
-      color: palette("form", "placeholder-darkened");
+      color: palette("form", "placeholder-darkened") !important;
     }
   }
 
@@ -468,7 +469,7 @@
     position: absolute;
 
     right: to-rem(12px);
-    top: to-rem(14px);
+    bottom: to-rem(14px);
 
     cursor: pointer;
   }

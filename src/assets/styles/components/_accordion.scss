@@ -1,0 +1,52 @@
+.accordion {
+  padding: 0;
+  margin-bottom: to-rem(26px);
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .accordion__header {
+    color: palette("text", "light");
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: normal;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    cursor: pointer;
+
+    padding: to-rem(26px);
+
+    .accordion__header__icon {
+      width: to-rem(14px);
+
+      transition: ease 0.3s;
+    }
+  }
+
+  .accordion__content {
+    padding: 0 to-rem(26px);
+
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transition: ease 0.3s;
+  }
+
+  &.active {
+    .accordion__header .accordion__header__icon {
+      transform: rotate(180deg);
+    }
+
+    .accordion__content {
+      padding-top: to-rem(8px);
+      padding-bottom: to-rem(26px);
+      display: block;
+      opacity: 1;
+      height: var(--ui-transition-height);
+    }
+  }
+}

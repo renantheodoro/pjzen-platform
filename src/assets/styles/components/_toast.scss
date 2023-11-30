@@ -1,4 +1,7 @@
 .toast {
+  box-shadow: 10px 0px 0px 0px #4f8172 inset,
+    0px 20px 42px 0px rgba(0, 0, 0, 0.25);
+
   position: fixed;
 
   top: 30px;
@@ -20,7 +23,7 @@
 
   min-width: 380px;
 
-  transition: ease 0.8s;
+  transition: ease 0.4s;
 
   opacity: 0;
 
