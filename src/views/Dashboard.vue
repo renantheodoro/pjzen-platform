@@ -1,6 +1,7 @@
 <template>
   <div class="view view--dashboard">
     <div class="container">
+      <h2>Links temporários</h2>
       <nav class="nav-list">
         <router-link :to="{ name: 'dashboard' }">Dashboard</router-link>
         <router-link :to="{ name: 'client-list' }">Clientes</router-link>
