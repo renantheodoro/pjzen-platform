@@ -147,6 +147,7 @@
   justify-content: space-between;
 
   position: relative;
+  margin: 0;
 
   margin-bottom: 1rem;
 
@@ -171,13 +172,44 @@
     margin-bottom: 0;
   }
 
-  input[type="text"],
+  input:not([type]),
+  input[type="text"]:not(.browser-default),
+  input[type="password"]:not(.browser-default),
+  input[type="email"]:not(.browser-default),
+  input[type="url"]:not(.browser-default),
+  input[type="time"]:not(.browser-default),
+  input[type="date"]:not(.browser-default),
+  input[type="datetime"]:not(.browser-default),
+  input[type="datetime-local"]:not(.browser-default),
+  input[type="tel"]:not(.browser-default),
+  input[type="number"]:not(.browser-default),
+  input[type="search"]:not(.browser-default),
+  textarea.materialize-textarea,
+  input:not([type]):focus:not([readonly]),
+  input[type="text"]:not(.browser-default):focus:not([readonly]),
+  input[type="password"]:not(.browser-default):focus:not([readonly]),
+  input[type="email"]:not(.browser-default):focus:not([readonly]),
+  input[type="url"]:not(.browser-default):focus:not([readonly]),
+  input[type="time"]:not(.browser-default):focus:not([readonly]),
+  input[type="date"]:not(.browser-default):focus:not([readonly]),
+  input[type="datetime"]:not(.browser-default):focus:not([readonly]),
+  input[type="datetime-local"]:not(.browser-default):focus:not([readonly]),
+  input[type="tel"]:not(.browser-default):focus:not([readonly]),
+  input[type="number"]:not(.browser-default):focus:not([readonly]),
+  input[type="search"]:not(.browser-default):focus:not([readonly]),
+  textarea.materialize-textarea:focus:not([readonly]),
+  textarea,
   .input-field__select-area__select,
   textarea {
+    box-shadow: none;
+    box-sizing: border-box;
+    margin: 0;
+    color: palette("form", "placeholder");
+
     background: palette("white");
     border-radius: 4px;
     border: none;
-    border: 1px solid #c3c3c3 !important;
+    border: 1px solid #c3c3c3;
 
     width: 100%;
     height: 45px;
@@ -185,8 +217,6 @@
     font-size: to-rem(14px);
     font-weight: 400;
     line-height: 139.1%;
-
-    color: #393939;
 
     padding: to-rem(12px);
 
@@ -205,7 +235,6 @@
       line-height: normal;
     }
 
-    &:focus,
     &:focus-visible,
     &:active,
     &::selection {
@@ -216,6 +245,65 @@
 
     &:disabled {
       background-color: #eee !important;
+    }
+
+    &:focus {
+      border: 1px solid palette("blue");
+    }
+  }
+
+  input.error,
+  &.input-field--select.error .select-dropdown.dropdown-trigger,
+  textarea.error {
+    border-color: palette("red") !important;
+  }
+
+  input.error,
+  &.input-field--select.error,
+  textarea.error {
+    & > label,
+    & > label.active,
+    & + label,
+    & + label.active,
+    & ~ .helper-text {
+      color: palette("red");
+    }
+  }
+
+  input.success,
+  &.input-field--select.success .select-dropdown.dropdown-trigger,
+  textarea.success {
+    border-color: palette("purple") !important;
+  }
+
+  input.success,
+  &.input-field--select.success,
+  textarea.success {
+    & > label,
+    & > label.active,
+    & + label,
+    & + label.active,
+    & ~ .helper-text {
+      color: palette("purple") !important;
+    }
+  }
+
+  input:focus:not(.success):not(.error),
+  &.input-field--select:focus:not(.success):not(.error)
+    .select-dropdown.dropdown-trigger,
+  textarea:focus:not(.success):not(.error) {
+    border-color: palette("orange");
+  }
+
+  input:focus:not(.success):not(.error),
+  &.input-field--select:focus:not(.success):not(.error),
+  textarea:focus:not(.success):not(.error) {
+    & > label,
+    & > label.active,
+    & + label,
+    & + label.active,
+    & ~ .helper-text {
+      color: palette("orange");
     }
   }
 
@@ -473,6 +561,27 @@
 
     cursor: pointer;
   }
+
+  &.error {
+    margin-bottom: 28px;
+  }
+
+  &:last-of-type {
+    margin-bottom: 1.875rem;
+  }
+
+  .select-wrapper .caret {
+    z-index: 9;
+    right: 0.5rem;
+  }
+
+  .helper-text {
+    font-size: 0.8rem;
+  }
+
+  textarea {
+    min-height: to-rem(68px);
+  }
 }
 
 .input-field--error {
@@ -510,123 +619,6 @@
   &.helper-text--error {
     color: palette("error");
   }
-}
-
-.input-field {
-  margin: 0;
-
-  &.error {
-    margin-bottom: 28px;
-  }
-
-  &:last-of-type {
-    margin-bottom: 1.875rem;
-  }
-
-  .select-wrapper .caret {
-    z-index: 9;
-    right: 0.5rem;
-  }
-
-  .helper-text {
-    font-size: 0.8rem;
-  }
-
-  input:not([type]),
-  input[type="text"]:not(.browser-default),
-  input[type="password"]:not(.browser-default),
-  input[type="email"]:not(.browser-default),
-  input[type="url"]:not(.browser-default),
-  input[type="time"]:not(.browser-default),
-  input[type="date"]:not(.browser-default),
-  input[type="datetime"]:not(.browser-default),
-  input[type="datetime-local"]:not(.browser-default),
-  input[type="tel"]:not(.browser-default),
-  input[type="number"]:not(.browser-default),
-  input[type="search"]:not(.browser-default),
-  textarea.materialize-textarea,
-  input:not([type]):focus:not([readonly]),
-  input[type="text"]:not(.browser-default):focus:not([readonly]),
-  input[type="password"]:not(.browser-default):focus:not([readonly]),
-  input[type="email"]:not(.browser-default):focus:not([readonly]),
-  input[type="url"]:not(.browser-default):focus:not([readonly]),
-  input[type="time"]:not(.browser-default):focus:not([readonly]),
-  input[type="date"]:not(.browser-default):focus:not([readonly]),
-  input[type="datetime"]:not(.browser-default):focus:not([readonly]),
-  input[type="datetime-local"]:not(.browser-default):focus:not([readonly]),
-  input[type="tel"]:not(.browser-default):focus:not([readonly]),
-  input[type="number"]:not(.browser-default):focus:not([readonly]),
-  input[type="search"]:not(.browser-default):focus:not([readonly]),
-  textarea.materialize-textarea:focus:not([readonly]),
-  textarea {
-    box-shadow: none;
-    border: none;
-    box-sizing: border-box;
-    margin: 0;
-    color: palette("form", "placeholder");
-
-    background: #fff;
-    border: 1px solid #b3b3b3;
-  }
-
-  input.error,
-  &.input-field--select.error .select-dropdown.dropdown-trigger,
-  textarea.error {
-    border-color: palette("red") !important;
-  }
-
-  input.error,
-  &.input-field--select.error,
-  textarea.error {
-    & > label,
-    & > label.active,
-    & + label,
-    & + label.active,
-    & ~ .helper-text {
-      color: palette("red");
-    }
-  }
-
-  input.success,
-  &.input-field--select.success .select-dropdown.dropdown-trigger,
-  textarea.success {
-    border-color: palette("purple") !important;
-  }
-
-  input.success,
-  &.input-field--select.success,
-  textarea.success {
-    & > label,
-    & > label.active,
-    & + label,
-    & + label.active,
-    & ~ .helper-text {
-      color: palette("purple") !important;
-    }
-  }
-
-  input:focus:not(.success):not(.error),
-  &.input-field--select:focus:not(.success):not(.error)
-    .select-dropdown.dropdown-trigger,
-  textarea:focus:not(.success):not(.error) {
-    border-color: palette("orange");
-  }
-
-  input:focus:not(.success):not(.error),
-  &.input-field--select:focus:not(.success):not(.error),
-  textarea:focus:not(.success):not(.error) {
-    & > label,
-    & > label.active,
-    & + label,
-    & + label.active,
-    & ~ .helper-text {
-      color: palette("orange");
-    }
-  }
-}
-
-textarea {
-  min-height: to-rem(68px);
 }
 
 .dropdown-content li > a,

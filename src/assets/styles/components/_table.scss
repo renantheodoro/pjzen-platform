@@ -3,7 +3,7 @@
   
   &.table-section--client {
     .status {
-      padding: to-rem(6px) to-rem(42px);
+      display: flex;
       width: 115px;
     }
 
@@ -30,8 +30,6 @@
 
   &.table-section--taker {
     .status {
-      padding: to-rem(6px) to-rem(8px);
-      text-align: center;
       justify-content: center;
       width: 158px;
     }

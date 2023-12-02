@@ -1,11 +1,17 @@
 .status {
-  display: flex;
+  display: inline-flex;
+  justify-content: center;
   align-items: center;
+  
   height: to-rem(25px);
   border-radius: 4px;
 
   font-size: to-rem(10px);
   font-weight: 700;
+  
+  text-align: center;
+
+  padding: 6px 8px;
 
   &.status--active {
     background: #d3f4ce;
@@ -29,5 +35,17 @@
     background-color: #bcceec;
 
     color: #295aaa;
+  }
+
+  &.status--pending {
+    background-color: #ffefe7;
+
+    color: #ee783c;
+  }
+
+  &.status--imported {
+    background-color: #e7eaff;
+
+    color: #3c58ee;
   }
 }

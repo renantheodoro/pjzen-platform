@@ -55,7 +55,7 @@ export default {
             {
               type: "status",
               status: "inactive",
-              content: "Inativo",
+              content: "Desativado",
             },
             {
               type: "text",

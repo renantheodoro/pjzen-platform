@@ -1,10 +1,8 @@
 <template>
   <div
-    :class="`card table-section table-section--${
-      tableType === 'TAKER' ? 'taker' : 'client'
-    }`"
+    :class="`card table-section table-section--${tableType.toLowerCase()}`"
   >
-    <div class="table-section__header">
+    <div v-if="!removeHeader" class="table-section__header">
       <h2>{{ title }}</h2>
 
       <div class="width-full flex-v-center flex-between">
@@ -36,7 +34,7 @@
     </div>
 
     <div class="table-section__body">
-      <div class="input-field input-field--checkbox">
+      <div v-if="!removeSelectAll" class="input-field input-field--checkbox">
         <label class="label-wrapper">
           <input type="checkbox" />
           <div class="checkbox__checkmark"></div>
@@ -150,7 +148,7 @@
         </tbody>
       </table>
 
-      <div class="table-section__pagination">
+      <div v-if="!removePagination" class="table-section__pagination">
         <span class="table-section__pagination__pages">1-20 de 1.500</span>
         <div class="table-section__pagination__buttons">
           <a @click.prevent class="button-prev">
@@ -182,6 +180,21 @@ export default {
     content: {
       type: Object,
       required: true,
+    },
+    removeHeader: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    removeSelectAll: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    removePagination: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 

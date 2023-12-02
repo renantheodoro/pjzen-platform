@@ -1,0 +1,109 @@
+.drag-and-drop {
+  border-radius: to-rem(8px);
+  border: 1px dashed palette("blue");
+
+  width: 100%;
+  height: to-rem(130px);
+
+  position: relative;
+
+  display: flex;
+
+  cursor: pointer;
+
+  .drag-and-drop__instructions {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    text-align: center;
+
+    position: relative;
+
+    z-index: 1;
+
+    p {
+      margin-bottom: 0;
+    }
+
+    .drag-and-drop__instructions__icon {
+      display: inline-block;
+      margin-right: 0.5rem;
+    }
+
+    .drag-and-drop__instructions__title {
+      color: palette("blue");
+      font-size: to-rem(14px);
+      font-weight: 700;
+      line-height: 100%;
+
+      margin-bottom: 0.5rem;
+    }
+
+    .drag-and-drop__instructions__text {
+      color: palette("form", "placeholder");
+      font-size: to-rem(12px);
+      font-weight: 400;
+      line-height: 120%;
+    }
+  }
+
+  .drag-and-drop__viewer {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+
+    z-index: 2;
+  }
+
+  .drag-and-drop__hover {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    cursor: pointer;
+
+    align-items: center;
+    justify-content: center;
+
+    background-color: palette("blue");
+
+    display: none;
+
+    z-index: 3;
+
+    .drag-and-drop__hover__title {
+      color: palette("white");
+      font-size: to-rem(14px);
+      font-weight: 700;
+      line-height: 100%;
+
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  &.drag-filled {
+    height: to-rem(300px);
+  }
+
+  &.drag-over {
+    .drag-and-drop__hover {
+      display: flex;
+    }
+  }
+}

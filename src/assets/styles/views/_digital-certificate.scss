@@ -1,0 +1,38 @@
+.view--register-digital-certificate {
+  .view--register-digital-certificate__title {
+    margin-bottom: to-rem(8px);
+  }
+
+  .view--register-digital-certificate__subtitle {
+    margin-bottom: to-rem(35px);
+  }
+
+  .form {
+    h3 {
+      color: palette("form", "label");
+      font-size: to-rem(14px);
+      font-weight: 700;
+      line-height: 139.1%; /* 19.474px */
+
+      margin-bottom: to-rem(18px);
+    }
+
+    .drag-and-drop {
+      margin-top: to-rem(28px);
+      margin-bottom: to-rem(21px);
+    }
+
+    .form_section--bottom {
+      margin-top: to-rem(32px);
+    }
+
+    .table-section.card {
+      width: 100%;
+      padding: 0;
+
+      .table-section__table {
+        margin-top: 0;
+      }
+    }
+  }
+}

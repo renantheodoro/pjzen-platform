@@ -21,7 +21,7 @@
       <span class="toast__text">{{ text }}</span>
     </div>
 
-    <a @click.prevent="closeToast" class="toast__close">
+    <a @click.prevent="close" class="toast__close">
       <img src="@/assets/images/icons/times-grey.svg" />
     </a>
   </div>
@@ -44,7 +44,7 @@ export default {
   },
 
   methods: {
-    showToast() {
+    show() {
       const self = this;
       self.isShowing = true;
 
@@ -53,7 +53,7 @@ export default {
       }, 6000);
     },
 
-    closeToast() {
+    close() {
       this.isShowing = false;
       clearInterval(this.timeout);
     },

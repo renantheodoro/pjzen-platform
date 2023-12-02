@@ -267,8 +267,8 @@ export default {
   },
 
   methods: {
-    showToast() {
-      this.$refs.toast.showToast();
+    show() {
+      this.$refs.toast.show();
     },
   },
 
