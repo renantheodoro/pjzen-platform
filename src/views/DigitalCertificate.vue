@@ -38,11 +38,11 @@
             <div class="form__row">
               <div class="input-field flex-1">
                 <label>Senha do Certificado Digital</label>
-                <input type="password" placeholder="Digite aqui" />
+                <input type="text" placeholder="Digite aqui" />
               </div>
               <div class="input-field flex-1">
                 <label>Confirmar senha do Certificado Digital</label>
-                <input type="password" placeholder="Digite aqui" />
+                <input type="text" placeholder="Digite aqui" />
               </div>
             </div>
           </div>

@@ -1,12 +1,13 @@
 <template>
-  <div
-    :class="`card table-section table-section--${tableType.toLowerCase()}`"
-  >
+  <div :class="`card table-section table-section--${tableType.toLowerCase()}`">
     <div v-if="!removeHeader" class="table-section__header">
-      <h2>{{ title }}</h2>
+      <h2 v-if="title">{{ title }}</h2>
 
       <div class="width-full flex-v-center flex-between">
-        <div class="input-field width-full no-mgn-b">
+        <div
+          v-if="tableType !== 'SERVICE'"
+          class="input-field width-full no-mgn-b"
+        >
           <label class="label-wrapper">
             <input
               type="text"
@@ -23,7 +24,32 @@
           </label>
         </div>
 
-        <button class="button button--outline button--light button--filter">
+        <div v-else class="input-field width-full no-mgn-b">
+          <button @click="$emit('onButtonAction')" class="button button--action button--outline">
+            <img src="@/assets/images/icons/plus-blue.svg" class="button--action__icon" />
+            {{ buttonActionText }}
+          </button>
+
+          <label class="label-wrapper">
+            <input
+              type="text"
+              id="input-client-list-search"
+              :placeholder="searchText"
+              class="input--darkened"
+              @keyup.enter="searchList"
+            />
+            <img
+              src="@/assets/images/icons/search.svg"
+              class="input-field__icon"
+              @click="searchList"
+            />
+          </label>
+        </div>
+
+        <button
+          v-if="!removeFilter"
+          class="button button--outline button--light button--filter"
+        >
           <img
             src="@/assets/images/icons/filter.svg"
             class="button__icon button__icon--left-side"
@@ -174,7 +200,7 @@ export default {
       required: true,
     },
     tableType: {
-      type: String, // TAKER | CLIENT
+      type: String, // TAKER | CLIENT | SERVICE
       required: true,
     },
     content: {
@@ -195,6 +221,19 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    removeFilter: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    buttonActionText: {
+      type: String,
+      required: false,
+    },
+    searchText: {
+      type: String,
+      required: false,
     },
   },
 

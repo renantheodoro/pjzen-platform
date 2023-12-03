@@ -95,7 +95,7 @@
         padding-left: 0;
       }
 
-      &:last-of-type {
+      &:last-of-type:not(.max-width-50) {
         padding-right: 0;
       }
     }
@@ -164,6 +164,7 @@
   }
 
   .label-wrapper {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;

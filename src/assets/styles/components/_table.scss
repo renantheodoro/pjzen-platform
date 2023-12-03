@@ -1,12 +1,7 @@
 .table-section {
   padding: to-rem(27px) to-rem(32px) to-rem(23px);
-  
-  &.table-section--client {
-    .status {
-      display: flex;
-      width: 115px;
-    }
 
+  &.table-section--client {
     .table-section__body .table-section__table tbody td {
       &:nth-child(1) {
         padding-right: to-rem(92px);
@@ -30,8 +25,7 @@
 
   &.table-section--taker {
     .status {
-      justify-content: center;
-      width: 158px;
+      min-width: 158px;
     }
 
     .table-section__body .table-section__table tbody td {
@@ -60,6 +54,15 @@
 
     .button__icon--left-side {
       margin-left: 1rem;
+    }
+
+    .button--action {
+      margin-right: 1rem;
+      min-width: to-rem(160px);
+
+      .button--action__icon {
+        margin-right: to-rem(12px);
+      }
     }
   }
 
@@ -92,7 +95,9 @@
 
         padding: to-rem(12px) 0;
 
-        border-bottom: 1px solid #eee;
+        &:not(:last-of-type) {
+          border-bottom: 1px solid #eee;
+        }
       }
     }
   }
