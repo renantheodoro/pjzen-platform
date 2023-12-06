@@ -95,7 +95,7 @@
         padding-left: 0;
       }
 
-      &:last-of-type:not(.max-width-50) {
+      &:last-of-type:not(.max-width) {
         padding-right: 0;
       }
     }
@@ -120,6 +120,84 @@
       .button {
         margin-left: 1rem;
         min-width: to-rem(140px);
+      }
+    }
+  }
+
+  &.form--vertical {
+    flex-direction: column;
+    width: 100%;
+    max-width: to-rem(550px);
+
+    margin: 0 auto;
+
+    .input-field {
+      input,
+      select,
+      textarea {
+        color: #3d3d3d !important;
+        &:focus {
+          background-color: #ecf3ff !important;
+          color: #4380e5 !important;
+          border: 1px solid #4380e5 !important;
+        }
+      }
+    }
+
+    .form__section > .input-field {
+      padding: 0;
+
+      margin-bottom: to-rem(30px);
+
+      &.input-field--password {
+        position: relative;
+
+        .input-field__password-button {
+          position: absolute;
+          right: to-rem(12px);
+          bottom: 0;
+
+          z-index: 2;
+          cursor: pointer;
+
+          height: 45px;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      &.input-field--forgot-password {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+
+        .button-forgot-password {
+          color: palette("blue");
+          font-size: to-rem(12px);
+          font-style: normal;
+          font-weight: 700;
+          line-height: normal;
+        }
+      }
+    }
+
+    .register-text {
+      color: palette("form", "label");
+      font-size: to-rem(12px);
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+
+      margin-top: to-rem(32px);
+      text-align: center;
+
+      width: 100%;
+
+      a {
+        color: palette("link");
+        font-weight: 700;
       }
     }
   }
@@ -171,6 +249,12 @@
     width: 100%;
 
     margin-bottom: 0;
+
+    input,
+    textarea,
+    select {
+      padding-right: 32px;
+    }
   }
 
   input:not([type]),
@@ -317,7 +401,7 @@
     color: #979797;
   }
 
-  input[type="text"].input--darkened,
+  input.input--darkened,
   .input-field__select-area__select.input--darkened,
   .datepicker-holder.input--darkened input {
     background-color: palette("form", "darkened") !important;

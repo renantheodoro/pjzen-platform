@@ -127,31 +127,13 @@
 
               <div class="form__section">
                 <div class="form__row">
-                  <div class="input-field">
-                    <label for="taker-option">CNAE do serviço</label>
-                    <label for="taker-option" class="input-field__select-area">
-                      <select
-                        class="input-field__select-area__select"
-                        name=""
-                        id="taker-option"
-                        ref=""
-                      >
-                        <option value="-1" selected>Selecione</option>
-                        <option>Teste 1</option>
-                        <option>Teste 2</option>
-                        <option>Teste 3</option>
-                        <option>Teste 4</option>
-                      </select>
-                      <img
-                        src="@/assets/images/icons/angle-down.svg"
-                        class="input-field__select-area__icon"
-                      />
-                    </label>
-
-                    <span v-if="false" class="helper-text helper-text--error">
-                      Error
-                    </span>
-                  </div>
+                  <Autocomplete
+                    label="CNAE do serviço"
+                    placeholder="Selecione"
+                    :itemList="cnaeServiceOptions"
+                    @input="console.log(event)"
+                    @onSelect="console.log(event)"
+                  ></Autocomplete>
                 </div>
 
                 <div class="form__row">
@@ -408,6 +390,7 @@
 import Internal from "@/components/Internal.vue";
 import Table from "@/components/Table.vue";
 import Toast from "@/components/Toast.vue";
+import Autocomplete from "@/components/Autocomplete.vue";
 
 export default {
   name: "app-register-service",
@@ -416,8 +399,14 @@ export default {
     return {
       tabSection: 1,
 
-      isRegisteringService: false,
+      isRegisteringService: true,
       isRegisteringTaker: false,
+
+      cnaeServiceOptions: [
+        "1032-5/99 | Fabricação de conservas de legumes e outros vegetais, exceto palmito",
+        "9529-1/99 | Reparação de livros, equipamentos esportivos, instrumentos musicais, brinquedos, artigos de tecido, afinação de pianos, com exceção de obras de arte, câmeras fotográficas, jóias, bicicletas, calçados, equipamentos eletrônicos de uso pessoal",
+        "1359-6/00 Fitas e tecidos elásticos, artefatos de passamanaria, como galões, vieses, entre outros",
+      ],
 
       serviceTableContent: {
         head: [
@@ -567,6 +556,7 @@ export default {
     Internal,
     Table,
     Toast,
+    Autocomplete,
   },
 };
 </script>
