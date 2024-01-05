@@ -25,7 +25,7 @@
 
     .form__row {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: flex-start;
 
       width: 100%;
@@ -667,30 +667,30 @@
   textarea {
     min-height: to-rem(68px);
   }
-}
 
-.input-field--error {
-  .input-field__select-area {
-    .input-field__select-area__select {
-      border-color: palette("error");
+  &.input-field--error {
+    .input-field__select-area {
+      .input-field__select-area__select {
+        border-color: palette("error");
+        color: palette("error");
+      }
+
+      &::after {
+      }
+    }
+
+    &.input-field__radio-item--filled {
+      border: 1px solid palette("error");
+
+      .input-field__radio-item__option .input-field__radio-item__text {
+        color: palette("error");
+      }
+    }
+
+    input {
+      border: 1px solid palette("error") !important;
       color: palette("error");
     }
-
-    &::after {
-    }
-  }
-
-  &.input-field__radio-item--filled {
-    border: 1px solid palette("error");
-
-    .input-field__radio-item__option .input-field__radio-item__text {
-      color: palette("error");
-    }
-  }
-
-  input[type="text"] {
-    border: 1px solid palette("error");
-    color: palette("error");
   }
 }
 
