@@ -3,66 +3,195 @@
     ref="toastError"
     type="error"
     title="Código incorreto"
-    text="O código inserido está incorreto. tente novamente"
+    :text="serviceErrorMessage"
   />
+  <Loader v-if="isBusy" />
 
-  <form class="form form--vertical form--validate-account">
-    <img
-      src="@/assets/images/icons/pjzen-authentication.svg"
-      class="authentication__view__logo"
-    />
+  <form
+    @submit.prevent="validateAccount"
+    class="form form--vertical form--validate-account"
+  >
+    <router-link :to="{ name: 'register-accountancy-form' }"
+      ><img
+        src="@/assets/images/icons/pjzen-authentication.svg"
+        class="authentication__view__logo"
+    /></router-link>
 
-    <h2 class="authentication__view__title">Valida sua conta</h2>
+    <h2 class="authentication__view__title">Valide sua conta</h2>
 
-    <p>Digite aqui código que você recebeu no email paul************.com</p>
+    <p>Digite aqui o código que você recebeu no email {{ maskedEmail }}</p>
 
     <div class="input-digits" :class="{ error: hasError }">
       <div class="input-digits__item">
-        <input @input="focusNext(1)" ref="input-1" type="text" maxlength="1" />
+        <input
+          @input="focusNext(1)"
+          ref="input-1"
+          type="text"
+          maxlength="1"
+          v-model="validationCodeForm.field1"
+        />
       </div>
       <div class="input-digits__item">
-        <input @input="focusNext(2)" ref="input-2" type="text" maxlength="1" />
+        <input
+          @input="focusNext(2)"
+          ref="input-2"
+          type="text"
+          maxlength="1"
+          v-model="validationCodeForm.field2"
+        />
       </div>
       <div class="input-digits__item">
-        <input @input="focusNext(3)" ref="input-3" type="text" maxlength="1" />
+        <input
+          @input="focusNext(3)"
+          ref="input-3"
+          type="text"
+          maxlength="1"
+          v-model="validationCodeForm.field3"
+        />
       </div>
       <div class="input-digits__item">
-        <input @input="focusNext(4)" ref="input-4" type="text" maxlength="1" />
+        <input
+          @input="focusNext(4)"
+          ref="input-4"
+          type="text"
+          maxlength="1"
+          v-model="validationCodeForm.field4"
+        />
       </div>
       <div class="input-digits__item">
-        <input @input="focusNext(5)" ref="input-5" type="text" maxlength="1" />
+        <input
+          @input="focusNext(5)"
+          ref="input-5"
+          type="text"
+          maxlength="1"
+          v-model="validationCodeForm.field5"
+        />
       </div>
     </div>
 
-    <legend>Enviar novamente em 00:50</legend>
+    <legend v-if="!hasSentEmail && !isTimerActive">
+      <a @click.prevent="sendValidationCode"
+        >Clique para enviar o código de validação para seu e-mail</a
+      >
+    </legend>
+
+    <legend v-if="!hasSentEmail && isTimerActive">
+      Enviar novamente em {{ timerText }}
+    </legend>
 
     <button
-      @click.prevent="success"
+      @submit.prevent
+      type="submit"
       ref="buttonValidate"
       class="button button--primary"
+      :disabled="!isFieldsValid"
     >
-      Validar Conta
-    </button>
-
-    <br />
-
-    <button @click.prevent="showError" class="button button--secondary">
-      TESTE O ERRO
+      Validar conta
     </button>
   </form>
 </template>
 <script>
+/**
+ * Components
+ * */
 import Toast from "@/components/Toast.vue";
+import Loader from "@/components/Loader.vue";
+
+/**
+ * Helpers
+ * */
+import { getAccountancyInfoFromLocalStorage } from "@/helpers/local-storage";
+
+/**
+ * Services
+ * */
+import sendValidationCodeService from "@/services/send-validation-code-service";
+import validateAccountService from "@/services/validate-account-service";
+
 export default {
   name: "app-validate-account",
 
+  components: { Toast, Loader },
+
   data() {
     return {
+      isBusy: false,
+
+      hasSentEmail: false,
+
+      isTimerActive: false,
+      timer: 50,
+      timerInterval: null,
+
       hasError: false,
+
+      serviceErrorMessage: null,
+
+      validationCodeForm: {
+        field1: null,
+        field2: null,
+        field3: null,
+        field4: null,
+        field5: null,
+      },
+
+      accountancyInfo: null,
     };
   },
 
+  created() {
+    this.accountancyInfo = getAccountancyInfoFromLocalStorage();
+  },
+
+  computed: {
+    validationCode() {
+      return `${this.validationCodeForm.field1}${this.validationCodeForm.field2}${this.validationCodeForm.field3}${this.validationCodeForm.field4}${this.validationCodeForm.field5}`;
+    },
+
+    maskedEmail() {
+      return this.maskEmail(this.accountancyInfo.email);
+    },
+
+    timerText() {
+      const minutes = Math.floor(this.timer / 60);
+      const seconds = this.timer % 60;
+      return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    },
+
+    isFieldsValid() {
+      if (
+        this.validationCodeForm.field1 != null &&
+        this.validationCodeForm.field1.length === 1 &&
+        this.validationCodeForm.field2 != null &&
+        this.validationCodeForm.field2.length === 1 &&
+        this.validationCodeForm.field3 != null &&
+        this.validationCodeForm.field3.length === 1 &&
+        this.validationCodeForm.field4 != null &&
+        this.validationCodeForm.field4.length === 1 &&
+        this.validationCodeForm.field5 != null &&
+        this.validationCodeForm.field5.length === 1
+      ) {
+        return true;
+      }
+      return false;
+    },
+  },
+
   methods: {
+    startTimer() {
+      this.isTimerActive = true;
+
+      this.timerInterval = setInterval(() => {
+        if (this.timer > 0) {
+          this.timer -= 1;
+        } else {
+          clearInterval(this.timerInterval);
+          this.isTimerActive = false;
+          this.timer = 50;
+        }
+      }, 1000);
+    },
+
     focusNext(index) {
       this.hasError = false;
 
@@ -85,9 +214,46 @@ export default {
       this.hasError = false;
       this.$router.push({ name: "validate-success" });
     },
-  },
 
-  components: { Toast },
+    async sendValidationCode() {
+      this.startTimer();
+
+      try {
+        await sendValidationCodeService({
+          uid: this.accountancyInfo.uid,
+          email: this.accountancyInfo.email,
+        });
+      } catch (error) {
+        this.serviceErrorMessage = error;
+        this.showError();
+      }
+    },
+
+    async handleValidateAccount() {
+      this.isBusy = true;
+
+      if (this.isFieldsValid) {
+        try {
+          await validateAccountService({
+            uid: this.accountancyInfo.uid,
+            validationCode: parseInt(this.validationCode),
+          });
+
+          this.success();
+        } catch (error) {
+          this.serviceErrorMessage = error;
+          this.showError();
+        } finally {
+          this.isBusy = false;
+        }
+      } else {
+        this.isBusy = false;
+        this.serviceErrorMessage =
+          "Preencha todos os campos antes de validar o código";
+        this.showError();
+      }
+    },
+  },
 };
 </script>
 <style lang=""></style>

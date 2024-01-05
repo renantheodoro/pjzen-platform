@@ -1,10 +1,12 @@
 // AUTHENTICATION
 import Login from "@/views/authentication/Login.vue";
-import RegisterUser from "@/views/authentication/register/RegisterUser.vue";
-import RegisterUserForm from "@/views/authentication/register/RegisterUserForm.vue";
+import RegisterAccountancy from "@/views/authentication/register/RegisterAccountancy.vue";
+import RegisterAccountancyForm from "@/views/authentication/register/RegisterAccountancyForm.vue";
 import ValidateAccount from "@/views/authentication/register/ValidateAccount.vue";
 import ValidateSuccess from "@/views/authentication/register/ValidateSuccess.vue";
-import RecoveryPassword from "@/views/authentication/RecoveryPassword.vue";
+import RecoveryPassword from "@/views/authentication/recover-password/RecoveryPassword.vue";
+import RegisterNewPassword from "@/views/authentication/recover-password/RegisterNewPassword.vue";
+import RecoveryPasswordSuccess from "@/views/authentication/recover-password/RecoveryPasswordSuccess.vue";
 
 // INTERNAL
 import Dashboard from "@/views/internal/Dashboard.vue";
@@ -28,18 +30,17 @@ export default [
     },
   },
   {
-    path: "/cadastro/",
-    name: "register-user",
-    component: RegisterUser,
+    path: "/cadastro",
+    component: RegisterAccountancy,
     meta: {
       pageName: "Cadastro",
       authGuard: false,
     },
     children: [
       {
-        path: "",
-        component: RegisterUserForm,
-        name: "register-form",
+        path: "/",
+        component: RegisterAccountancyForm,
+        name: "register-accountancy-form",
       },
       {
         path: "validar-conta",
@@ -59,6 +60,24 @@ export default [
     component: RecoveryPassword,
     meta: {
       pageName: "Recuperar Senha",
+      authGuard: false,
+    },
+  },
+  {
+    path: "/cadastrar-nova-senha",
+    name: "register-new-password",
+    component: RegisterNewPassword,
+    meta: {
+      pageName: "Cadastre uma nova senha",
+      authGuard: false,
+    },
+  },
+  {
+    path: "/senha-atualizada",
+    name: "recovery-password-success",
+    component: RecoveryPasswordSuccess,
+    meta: {
+      pageName: "Senha atualizada com sucesso",
       authGuard: false,
     },
   },

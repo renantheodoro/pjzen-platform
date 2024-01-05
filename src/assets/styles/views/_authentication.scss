@@ -140,12 +140,40 @@
         text-align: center;
 
         margin-bottom: to-rem(52px);
+
+        a {
+          color: palette("blue");
+        }
       }
 
       .button {
         margin: 0 auto;
         width: 200px;
         display: block;
+      }
+    }
+
+    .validate-success h1 {
+      margin-top: to-rem(113px);
+    }
+  }
+
+  &.authentication--recovery-password {
+    h1 {
+      margin-bottom: to-rem(14px);
+
+      & ~ p {
+        margin-bottom: to-rem(33px);
+      }
+    }
+
+    .button {
+      max-width: to-rem(210px);
+      margin: 0 auto;
+
+      & ~ p {
+        margin-top: 1rem;
+        color: #828282
       }
     }
   }

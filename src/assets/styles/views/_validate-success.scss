@@ -1,0 +1,33 @@
+.validate-success {
+  width: 100%;
+  .validate-success__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    text-align: center;
+
+    h1 {
+      color: #000;
+      font-size: 28px;
+      font-weight: 700;
+
+      margin-bottom: 8px;
+      margin-top: 1rem;
+    }
+
+    p {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 120%;
+
+      margin-bottom: 35px;
+    }
+
+    .button {
+        min-width: 200px;
+    }
+  }
+}
