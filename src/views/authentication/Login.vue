@@ -108,7 +108,7 @@
 
           <p class="register-text">
             É de uma empresa de contabilidade?
-            <router-link :to="{ name: 'register-accountancy-form' }"
+            <router-link :to="{ name: 'create-accountancy-form' }"
               >Faça seu cadastro</router-link
             >
           </p>
@@ -127,12 +127,7 @@ import loginModel from "@/data/models/login-model.js";
 /**
  * Services
  * */
-import loginService from "@/services/login-service";
-
-/**
- * Helpers
- * */
-import { addLoginDataToLocalStorage } from "@/helpers/local-storage";
+import loginService from "@/services/authentication/login-service.js";
 
 /**
  * Components
@@ -194,12 +189,10 @@ export default {
 
       if (this.isFormValid()) {
         try {
-          const loginResponse = await loginService({
+          await loginService({
             email: this.form.email.value,
             password: this.form.password.value,
           });
-
-          addLoginDataToLocalStorage(loginResponse.loginData);
 
           this.$router.push({ name: "dashboard" });
 
@@ -207,7 +200,7 @@ export default {
         } catch (error) {
           this.isBusy = false;
 
-          this.serviceErrorMessage = error;
+          this.serviceErrorMessage = error.toString();
           this.$refs.toastError.show();
         }
       }

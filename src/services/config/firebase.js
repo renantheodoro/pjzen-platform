@@ -6,13 +6,13 @@ import { getFirestore } from "firebase/firestore";
 import { getFunctions } from 'firebase/functions';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB0IuIx44wHkT55V1b8EFF9Bz6PvGts-QE",
-  authDomain: "pjzen-plataform-dev.firebaseapp.com",
-  databaseURL: "https://pjzen-plataform-dev-default-rtdb.firebaseio.com",
-  projectId: "pjzen-plataform-dev",
-  storageBucket: "pjzen-plataform-dev.appspot.com",
-  messagingSenderId: "324203579177",
-  appId: "1:324203579177:web:93136ed0a7242f8a19d938",
+  apiKey: process.env.VUE_APP_FIREBASE_APIKEY,
+  authDomain: process.env.VUE_APP_AUTH_DOMAIN,
+  databaseURL: process.env.VUE_APP_DATABASE_URL,
+  projectId: process.env.VUE_APP_PROJECTID,
+  storageBucket: process.env.VUE_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,
+  appId: process.env.VUE_APP_APPID,
 };
 
 const firebaseApp = initializeApp(firebaseConfig);

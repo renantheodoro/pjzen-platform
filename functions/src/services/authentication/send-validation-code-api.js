@@ -1,40 +1,44 @@
 const admin = require("../../firebase/firebase-admin");
+const errorHandler = require("../../data/error-handler");
 const nodemailer = require("nodemailer");
 const { ACCOUNTANCIES_COLLECTION } = require("../../data/collections");
+const { logApi } = require("../../data/log-api");
+const validateRequest = require("../common/validate-request");
 
-const { log, error } = require("firebase-functions/logger");
+const apiServiceTitle = "FIREBASE SEND VALIDATION CODE";
 
 module.exports = {
   async call(req, res) {
-    const { uid, email } = req.body;
+    const { authorization: apiKey } = req.headers;
 
-    log(
-      "[API] FIREBASE SEND VALIDATION CODE SERVICE -> Iniciando envio de código de validação..."
-    );
+    if (!validateRequest(apiKey)) {
+      throw Error("unauthorized");
+    }
+
+    const { documentId, email } = req.body;
+
+    logApi(apiServiceTitle, "Iniciando envio de código de validação...");
 
     const validationCode = Math.floor(10000 + Math.random() * 90000);
 
     try {
-      // Salvar o código no Firestore associado ao ID do usuário
       const userDocRef = admin
         .firestore()
         .collection(ACCOUNTANCIES_COLLECTION)
-        .doc(uid);
+        .doc(documentId);
 
       await userDocRef.update({
         "authenticationData.validationCode": validationCode,
       });
 
-      // Criar um transporte de e-mail
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: "renan.b.theodoro@gmail.com",
-          pass: "gsle zfwh kflu usmw",
+          user: "renan.b.theodoro@gmail.com", // TODO: adicionar o e-mail real
+          pass: "gsle zfwh kflu usmw", // TODO: adicionar o password real
         },
       });
 
-      // Configurar as opções do e-mail
       const mailOptions = {
         from: "pjzen@email.com",
         to: email,
@@ -42,7 +46,6 @@ module.exports = {
         text: `Seu código de verificação é: ${validationCode}`,
       };
 
-      // Enviar o e-mail
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.error("Erro ao enviar o e-mail:", error);
@@ -51,30 +54,16 @@ module.exports = {
         }
       });
 
-      log(
-        "[API] FIREBASE SEND VALIDATION CODE SERVICE -> Código de verificação enviado com sucesso!"
-      );
+      const successMessage = "Código enviado com sucesso!";
+      logApi(apiServiceTitle, successMessage);
 
       res.status(200).send({
-        success: {
-          message: "Código enviado com sucesso!",
-          statusCode: 200,
-        },
+        status: 200,
+        message: successMessage,
       });
-    } catch (e) {
-      error(
-        "[API] FIREBASE SEND VALIDATION CODE SERVICE -> Erro ao enviar código de verificação:",
-        e
-      );
-
-      res.status(500).send({
-        error: {
-          statusCode: 500,
-          message:
-            "Não foi possível enviar o código de verificação. Ocorreu um erro desconhecido.",
-          e: e,
-        },
-      });
+    } catch (error) {
+      const errorResponse = errorHandler(error, apiServiceTitle);
+      res.status(errorResponse.status).send(errorResponse);
     }
   },
 };

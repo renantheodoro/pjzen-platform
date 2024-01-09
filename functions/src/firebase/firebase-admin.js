@@ -4,7 +4,7 @@ const serviceAccount = require("./pjzen-plataform-dev-firebase-adminsdk-mfnrc-3e
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://pjzen-plataform-dev-default-rtdb.firebaseio.com",
+  databaseURL: process.env.DATABASE_URL,
 });
 
 module.exports = admin;

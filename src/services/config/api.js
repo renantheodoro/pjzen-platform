@@ -11,14 +11,14 @@ export default () => {
     ? BASE_CLOUDFUNCTIONS_URL_LOCAL
     : BASE_CLOUDFUNCTIONS_URL_DEV;
 
-  //   const apiKey = process.env.VUE_APP_FIREBASE_APIKEY;
+  const apiKey = process.env.VUE_APP_FIREBASE_APIKEY;
 
   const instance = axios.create({
     baseURL: baseUrl,
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
-      //   Authorization: apiKey,
+      Authorization: apiKey,
     },
   });
 

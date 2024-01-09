@@ -1,12 +1,12 @@
 /**
- * loginData: {
- *   accessToken: [String] // Token de acesso do usuário,
+ * userData: {
  *   emailVerified: [Boolean] // Indica se o e-mail do usuário foi verificado,
  *   uid: [String] // Identificador único do usuário,
  *   email: [String] // Endereço de e-mail do usuário,
  * },
  *
  * accountancyInfo: {
+ *   uid: [String] // Identificador único do usuário,
  *   firstName: [String] // Primeiro nome do escritório contábil,
  *   lastName: [String] // Sobrenome do responsável pelo escritório contábil,
  *   clientsNumber: [Number] // Número de clientes do escritório contábil,
@@ -18,30 +18,50 @@
  *   phone: [String] // Número de telefone do escritório contábil,
  *   serviceType: [String] // Tipo de serviço oferecido pelo escritório contábil,
  * },
+ * 
  */
 
-const LOGIN_DATA_LOCALSTORAGE_KEY = "loginData";
-const ACCOUNTANCY_INFO_LOCALSTORAGE_KEY = "accountancyInfo";
+const USER_DATA_LOCALSTORAGE_KEY = "USER_DATA";
+const ACCOUNTANCY_DATA_LOCALSTORAGE_KEY = "ACCOUNTANCY_INFO";
 
-export const addLoginDataToLocalStorage = (loginData) => {
-  localStorage.setItem(LOGIN_DATA_LOCALSTORAGE_KEY, JSON.stringify(loginData));
+/** GET */
+export const getUserDataFromLocalStorage = () => {
+  const storedUserData = localStorage.getItem(USER_DATA_LOCALSTORAGE_KEY);
+
+  if (
+    storedUserData !== "undefined" &&
+    storedUserData !== undefined &&
+    storedUserData !== "" &&
+    storedUserData !== null
+  ) {
+    return JSON.parse(storedUserData);
+  }
+
+  return null;
 };
 
-export const getLoginDataFromLocalStorage = () => {
-  const storedLoginData = localStorage.getItem(LOGIN_DATA_LOCALSTORAGE_KEY);
-  return storedLoginData ? JSON.parse(storedLoginData) : null;
-};
-
-export const addAccountancyInfoToLocalStorage = (accountancyInfo) => {
-  localStorage.setItem(
-    ACCOUNTANCY_INFO_LOCALSTORAGE_KEY,
-    JSON.stringify(accountancyInfo)
+export const getAccountancyDataFromLocalStorage = () => {
+  const storedAccountancyData = localStorage.getItem(
+    ACCOUNTANCY_DATA_LOCALSTORAGE_KEY
   );
+
+  if (
+    storedAccountancyData !== "undefined" &&
+    storedAccountancyData !== undefined &&
+    storedAccountancyData !== "" &&
+    storedAccountancyData !== null
+  ) {
+    return JSON.parse(storedAccountancyData);
+  }
+
+  return null;
 };
 
-export const getAccountancyInfoFromLocalStorage = () => {
-  const storedAccountancyInfo = localStorage.getItem(
-    ACCOUNTANCY_INFO_LOCALSTORAGE_KEY
-  );
-  return storedAccountancyInfo ? JSON.parse(storedAccountancyInfo) : null;
+/** SET */
+export const setUserDataToLocalStorage = (data) => {
+  localStorage.setItem(USER_DATA_LOCALSTORAGE_KEY, JSON.stringify(data));
+};
+
+export const setAccountancyDataToLocalStorage = (data) => {
+  localStorage.setItem(ACCOUNTANCY_DATA_LOCALSTORAGE_KEY, JSON.stringify(data));
 };

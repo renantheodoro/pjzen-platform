@@ -86,12 +86,7 @@ import recoveryModel from "@/data/models/recovery-password-model.js";
 /**
  * Services
  * */
-import recoveryPasswordEmailService from "@/services/send-recovery-password-email-service";
-
-/**
- * Helpers
- * */
-// import { addLoginDataToLocalStorage } from "@/helpers/local-storage";
+import recoveryPasswordEmailService from "@/services/authentication/send-recovery-password-email-service";
 
 /**
  * Components
@@ -199,8 +194,8 @@ export default {
             email: this.form.email.value,
           });
 
-          if (recoveryPasswordResponse) {
-            this.showSuccessToast(recoveryPasswordResponse);
+          if (recoveryPasswordResponse?.message) {
+            this.showSuccessToast(recoveryPasswordResponse.message);
           }
 
           this.isBusy = false;

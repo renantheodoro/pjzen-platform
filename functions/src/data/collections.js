@@ -1,3 +1,1 @@
-module.exports = {
-  ACCOUNTANCIES_COLLECTION: "accountancies",
-};
+module.exports = { ACCOUNTANCIES_COLLECTION: "accountancies" };

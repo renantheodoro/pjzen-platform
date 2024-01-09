@@ -1,19 +1,25 @@
 import axios from "axios";
 
-export default {
-  async validateZipcode(zipCode) {
-    try {
-      const response = await axios.get(
-        `https://viacep.com.br/ws/${zipCode}/json/`
-      );
+import { verifyToken } from "@/services/common/interceptor-service";
 
-      if (response.error) {
-        return { error: response.error };
-      }
+export default async (zipCode) => {
+  try {
+    const isSessionValid = await verifyToken();
 
-      return response;
-    } catch (error) {
-      return { error };
+    if (!isSessionValid) {
+      throw Error("Token inválido");
     }
-  },
+
+    const response = await axios.get(
+      `https://viacep.com.br/ws/${zipCode}/json/`
+    );
+
+    if (response.error) {
+      return { error: response.error };
+    }
+
+    return response;
+  } catch (error) {
+    return { error };
+  }
 };

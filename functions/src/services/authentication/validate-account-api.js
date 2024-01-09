@@ -1,65 +1,57 @@
 const admin = require("../../firebase/firebase-admin");
-const { log, error } = require("firebase-functions/logger");
+const getDocumentByIdApi = require("../common/get-document-by-id");
+const { logApi } = require("../../data/log-api");
 const { ACCOUNTANCIES_COLLECTION } = require("../../data/collections");
+const errorHandler = require("../../data/error-handler");
+const validateRequest = require("../common/validate-request");
+
+const apiServiceTitle = "FIREBASE VALIDATE ACCOUNT SERVICE";
+
+const getStoredCode = async (documentId) => {
+  const snapshot = await getDocumentByIdApi(
+    documentId,
+    ACCOUNTANCIES_COLLECTION
+  );
+  return snapshot?.authenticationData?.validationCode;
+};
+
+const markEmailAsVerified = async (documentId) => {
+  return await admin.auth().updateUser(documentId, { emailVerified: true });
+};
+
+const clearValidationCode = async (documentId) => {
+  const firestore = admin.firestore();
+  const docRef = firestore.collection(ACCOUNTANCIES_COLLECTION).doc(documentId);
+
+  await docRef.update({
+    authenticationData: {
+      isEmailVerified: true,
+      validationCode: -1,
+    },
+  });
+
+  logApi(
+    apiServiceTitle,
+    `Verificação de e-mail atualizada com sucesso! UID da operação: ${documentId}`
+  );
+};
 
 module.exports = {
-  async getStoredCode(uid) {
-    try {
-      const snapshot = await admin
-        .firestore()
-        .collection(ACCOUNTANCIES_COLLECTION)
-        .doc(uid)
-        .get();
-
-      return snapshot.data()?.validationCode;
-    } catch (error) {
-      throw new Error(
-        `Erro ao obter código armazenado para UID ${uid}: ${error.message}`
-      );
-    }
-  },
-
-  async markEmailAsVerified(uid) {
-    try {
-      return await admin.auth().updateUser(uid, { emailVerified: true });
-    } catch (error) {
-      throw new Error(
-        `Erro ao marcar e-mail como verificado para UID ${uid}: ${error.message}`
-      );
-    }
-  },
-
-  async clearValidationCode(uid) {
-    try {
-      const firestore = admin.firestore();
-      const docRef = firestore.collection(ACCOUNTANCIES_COLLECTION).doc(uid);
-
-      await docRef.update({
-        validationCode: -1, // Atualiza o valor para -1
-      });
-
-      log(
-        `Propriedade validationCode atualizada para -1 com sucesso para o documento com UID ${uid}`
-      );
-    } catch (error) {
-      error(
-        `Erro ao atualizar a propriedade validationCode para -1 no documento com UID ${uid}:`,
-        error
-      );
-    }
-  },
-
   async call(req, res) {
-    log(
-      "[API] FIREBASE VALIDATE ACCOUNT SERVICE -> Iniciando validação de código..."
-    );
+    const { authorization: apiKey } = req.headers;
+
+    if (!validateRequest(apiKey)) {
+      throw Error("unauthorized");
+    }
 
     try {
-      const { uid, validationCode } = req.body;
+      logApi(apiServiceTitle, "Iniciando validação de código....");
+
+      const { documentId, validationCode } = req.body;
 
       // Validações dos campos dentro do objeto form
-      if (!uid || typeof uid !== "string") {
-        throw new Error("O valor 'uid' não é válido.");
+      if (!documentId || typeof documentId !== "string") {
+        throw new Error("O valor 'documentId' não é válido.");
       }
 
       if (!validationCode || isNaN(Number(validationCode))) {
@@ -67,43 +59,30 @@ module.exports = {
       }
 
       // Obter o código de verificação do Firestore
-      const storedCode = await module.exports.getStoredCode(uid);
+      const storedCode = await getStoredCode(documentId);
 
       // Verificar se o código inserido pelo usuário é válido
       if (validationCode === storedCode) {
         // Marcar o e-mail como verificado no Firebase Authentication
-        await module.exports.markEmailAsVerified(uid);
+        await markEmailAsVerified(documentId);
 
         // Limpar o código de verificação no Firestore
-        const validationCodeDeleteResponse =
-          await module.exports.clearValidationCode(uid);
+        const response = await clearValidationCode(documentId);
 
-        log("validationCodeDeleteResponse", validationCodeDeleteResponse);
-
-        log(
-          "[API] FIREBASE VALIDATE ACCOUNT SERVICE -> E-mail verificado com sucesso!"
-        );
+        const successMessage = "E-mail verificado com sucesso!";
+        logApi(apiServiceTitle, successMessage);
 
         res.status(200).send({
-          success: {
-            message: "Conta validada com sucesso!",
-            statusCode: 200,
-          },
+          status: 200,
+          message: successMessage,
+          data: response,
         });
       } else {
-        throw Error("Ocorreu um erro durante a validação da conta.");
+        throw Error("invalid-code-verification");
       }
-    } catch (e) {
-      error(`[API] FIREBASE VALIDATE ACCOUNT SERVICE -> ${e}`);
-
-      res.status(500).send({
-        error: {
-          statusCode: 500,
-          message:
-            "Não foi possível validar o código de verificação. Ocorreu um erro desconhecido.",
-          e: e,
-        },
-      });
+    } catch (error) {
+      const errorResponse = errorHandler(error, apiServiceTitle);
+      res.status(errorResponse.status).send(errorResponse);
     }
   },
 };

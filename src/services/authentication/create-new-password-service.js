@@ -1,6 +1,8 @@
 import api from "@/services/config/api";
+import { errorLog } from "@/helpers/log";
+import { encrypt } from "@/helpers/encrypt";
 
-const registerNewPasswordService = async (data) => {
+export default async (data) => {
   try {
     const { email, resetPasswordCode, newPassword } = data;
 
@@ -17,18 +19,23 @@ const registerNewPasswordService = async (data) => {
       throw new Error("O valor 'newPassword' não é válido.");
     }
 
-    const response = await api().post("register-new-password", {
+    const encryptedPassword = encrypt(newPassword);
+
+    const response = await api().post("create-new-password", {
       email,
       resetPasswordCode,
-      newPassword,
+      newPassword: encryptedPassword,
     });
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.message;
-    console.error("[REGISTER NEW PASSWORD SERVICE] Message ->", errorMessage);
+    let errorMessage = error?.response?.data?.message;
+
+    if (!errorMessage) {
+      errorMessage = "Ocorreu um erro desconhecido.";
+    }
+
+    errorLog(`REGISTER NEW PASSWORD: ${errorMessage} - ${error}`);
     throw errorMessage;
   }
 };
-
-export default registerNewPasswordService;

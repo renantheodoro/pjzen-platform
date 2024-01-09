@@ -98,6 +98,29 @@
       &:last-of-type:not(.max-width) {
         padding-right: 0;
       }
+
+      &.input-field--password {
+        position: relative;
+
+        .input-field__password-button {
+          position: absolute;
+          right: to-rem(12px);
+          top: 24px;
+
+          z-index: 2;
+          cursor: pointer;
+
+          height: 45px;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &.compensate–right {
+            right: to-rem(22px);
+          }
+        }
+      }
     }
   }
 
@@ -148,25 +171,6 @@
       padding: 0;
 
       margin-bottom: to-rem(30px);
-
-      &.input-field--password {
-        position: relative;
-
-        .input-field__password-button {
-          position: absolute;
-          right: to-rem(12px);
-          bottom: 0;
-
-          z-index: 2;
-          cursor: pointer;
-
-          height: 45px;
-
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-      }
 
       &.input-field--forgot-password {
         display: flex;

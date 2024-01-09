@@ -1,6 +1,6 @@
 <template lang="">
   <div class="validate-success">
-    <router-link :to="{ name: 'register-accountancy-form' }"
+    <router-link :to="{ name: 'create-accountancy-form' }"
       ><img
         src="@/assets/images/icons/pjzen-authentication.svg"
         class="authentication__view__logo"
@@ -9,7 +9,7 @@
     <div class="validate-success__content">
       <img src="@/assets/images/validate-success.svg" alt="" />
 
-      <h1>Sucesso!</h1>
+      <h1 class="no-mgn-t">Sucesso!</h1>
       <p>
         Sua conta foi validada e está pronta para utilizar! <br />
         Faça seu login!
