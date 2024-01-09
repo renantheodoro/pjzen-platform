@@ -22,13 +22,28 @@ export default {
     };
   },
   created() {
-    this.routes = routes.filter((route) => route.meta);
-    this.routes = this.routes.map((route) => {
+    this.extractRoutes();
+  },
+  methods: {
+    extractRoutes() {
+      this.routes = routes
+        .filter((route) => route.meta)
+        .flatMap((route) =>
+          route.children ? this.mapChildren(route) : this.mapRoute(route)
+        );
+    },
+    mapChildren(parentRoute) {
+      return parentRoute.children.map((child) => ({
+        to: { name: child.name },
+        meta: child.meta,
+      }));
+    },
+    mapRoute(route) {
       return {
         to: { name: route.name },
         meta: route.meta,
       };
-    });
+    },
   },
 };
 </script>

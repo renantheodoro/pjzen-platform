@@ -8,7 +8,7 @@
   <Loader v-if="isBusy" />
 
   <form class="form form--vertical">
-    <router-link :to="{ name: 'register-accountancy-form' }"
+    <router-link :to="{ name: 'create-accountancy-form' }"
       ><img
         src="@/assets/images/icons/pjzen-authentication.svg"
         class="authentication__view__logo"
@@ -24,9 +24,9 @@
             'input-field--error': form.firstName.isValid === false,
           }"
         >
-          <label for="register-accountancy--firstName">Nome</label>
+          <label for="create-accountancy--firstName">Nome</label>
           <input
-            id="register-accountancy--firstName"
+            id="create-accountancy--firstName"
             type="text"
             placeholder="Seu nome"
             v-model="form.firstName.value"
@@ -49,9 +49,9 @@
             'input-field--error': form.lastName.isValid === false,
           }"
         >
-          <label for="register-accountancy--lastName">Sobrenome</label>
+          <label for="create-accountancy--lastName">Sobrenome</label>
           <input
-            id="register-accountancy--lastName"
+            id="create-accountancy--lastName"
             type="text"
             placeholder="Seu sobrenome"
             v-model="form.lastName.value"
@@ -76,9 +76,9 @@
             'input-field--error': form.email.isValid === false,
           }"
         >
-          <label for="register-accountancy--email">E-mail profissional</label>
+          <label for="create-accountancy--email">E-mail profissional</label>
           <input
-            id="register-accountancy--email"
+            id="create-accountancy--email"
             type="text"
             placeholder="Seu e-mail"
             v-model="form.email.value"
@@ -100,9 +100,9 @@
             'input-field--error': form.phone.isValid === false,
           }"
         >
-          <label for="register-accountancy--phone">Celular</label>
+          <label for="create-accountancy--phone">Celular</label>
           <input
-            id="register-accountancy--phone"
+            id="create-accountancy--phone"
             type="text"
             placeholder="Seu número"
             v-model="form.phone.value"
@@ -128,9 +128,9 @@
             'input-field--error': form.company.isValid === false,
           }"
         >
-          <label for="register-accountancy--company">Empresa</label>
+          <label for="create-accountancy--company">Empresa</label>
           <input
-            id="register-accountancy--company"
+            id="create-accountancy--company"
             type="text"
             placeholder=""
             v-model="form.company.value"
@@ -152,9 +152,9 @@
             'input-field--error': form.cnpj.isValid === false,
           }"
         >
-          <label for="register-accountancy--cnpj">CNPJ</label>
+          <label for="create-accountancy--cnpj">CNPJ</label>
           <input
-            id="register-accountancy--cnpj"
+            id="create-accountancy--cnpj"
             type="text"
             placeholder=""
             v-model="form.cnpj.value"
@@ -180,11 +180,11 @@
             'input-field--error': form.clientsNumber.isValid === false,
           }"
         >
-          <label for="register-accountancy--clientsNumber"
+          <label for="create-accountancy--clientsNumber"
             >Número de clientes</label
           >
           <input
-            id="register-accountancy--clientsNumber"
+            id="create-accountancy--clientsNumber"
             type="text"
             placeholder=""
             v-model="form.clientsNumber.value"
@@ -208,15 +208,13 @@
             'input-field--error': form.serviceType.isValid === false,
           }"
         >
-          <label for="register-accountancy--serviceType"
-            >Serviço prestado</label
-          >
+          <label for="create-accountancy--serviceType">Serviço prestado</label>
           <label
-            for="register-accountancy--serviceType"
+            for="create-accountancy--serviceType"
             class="input-field__select-area"
           >
             <select
-              id="register-accountancy--serviceType"
+              id="create-accountancy--serviceType"
               type="text"
               v-model="form.serviceType.value"
               @blur="
@@ -247,15 +245,15 @@
 
       <div class="form__row">
         <div
-          class="input-field"
+          class="input-field input-field--password"
           :class="{
             'input-field--error': form.password.isValid === false,
           }"
         >
-          <label for="register-accountancy--password">Crie sua senha</label>
+          <label for="create-accountancy--password">Crie sua senha</label>
           <input
-            id="register-accountancy--password"
-            type="password"
+            id="create-accountancy--password"
+            :type="passwordFieldType1"
             placeholder="Sua senha"
             v-model="form.password.value"
             @blur="
@@ -269,20 +267,34 @@
             class="helper-text helper-text--error"
             >{{ form.password.errorMessage }}</span
           >
+
+          <a
+            @click.prevent="togglePasswordView(1)"
+            class="input-field__password-button compensate–right"
+          >
+            <img
+              src="@/assets/images/icons/eye-password.svg"
+              v-if="passwordFieldType1 === 'password'"
+            />
+            <img
+              src="@/assets/images/icons/eye-password-slash.svg"
+              v-if="passwordFieldType1 === 'text'"
+            />
+          </a>
         </div>
 
         <div
-          class="input-field"
+          class="input-field input-field--password"
           :class="{
             'input-field--error': form.confirmPassword.isValid === false,
           }"
         >
-          <label for="register-accountancy--confirmPassword"
+          <label for="create-accountancy--confirmPassword"
             >Confirme sua senha</label
           >
           <input
-            id="register-accountancy--confirmPassword"
-            type="password"
+            id="create-accountancy--confirmPassword"
+            :type="passwordFieldType2"
             placeholder="Repita sua senha"
             v-model="form.confirmPassword.value"
             @blur="
@@ -296,6 +308,20 @@
             class="helper-text helper-text--error"
             >{{ form.confirmPassword.errorMessage }}</span
           >
+
+          <a
+            @click.prevent="togglePasswordView(2)"
+            class="input-field__password-button"
+          >
+            <img
+              src="@/assets/images/icons/eye-password.svg"
+              v-if="passwordFieldType2 === 'password'"
+            />
+            <img
+              src="@/assets/images/icons/eye-password-slash.svg"
+              v-if="passwordFieldType2 === 'text'"
+            />
+          </a>
         </div>
       </div>
 
@@ -319,17 +345,12 @@
  * Mixins
  * */
 import formMixin from "@/data/mixins/form-mixin.js";
-import registerAccountancyModel from "@/data/models/register-accountancy-model.js";
-
-/**
- * Helpers
- * */
-import { addAccountancyInfoToLocalStorage } from "@/helpers/local-storage";
+import registerAccountancyModel from "@/data/models/create-accountancy-model.js";
 
 /**
  * Services
  * */
-import registerAccountancyService from "@/services/register-accountancy-service";
+import createAccountancyService from "@/services/authentication/create-accountancy-service.js";
 
 /**
  * Components
@@ -338,7 +359,7 @@ import Toast from "@/components/Toast.vue";
 import Loader from "@/components/Loader.vue";
 
 export default {
-  name: "app-register-form",
+  name: "app-create-form",
 
   mixins: [formMixin, registerAccountancyModel],
 
@@ -355,10 +376,18 @@ export default {
       isBusy: false,
 
       serviceErrorMessage: null,
+
+      passwordFieldType1: "password",
+      passwordFieldType2: "password",
     };
   },
 
   methods: {
+    togglePasswordView(index) {
+      this[`passwordFieldType${index}`] =
+        this[`passwordFieldType${index}`] === "password" ? "text" : "password";
+    },
+    
     validateInputs() {
       this.validateField({
         reference: this.form.firstName,
@@ -441,28 +470,27 @@ export default {
 
       if (this.isFormValid()) {
         try {
-          const registerAccountancyServiceResponse =
-            await registerAccountancyService({
-              firstName: this.form.firstName.value,
-              lastName: this.form.lastName.value,
-              email: this.form.email.value,
-              phone: this.form.phone.value,
-              company: this.form.company.value,
-              cnpj: this.form.cnpj.value,
-              clientsNumber: this.form.clientsNumber.value,
-              serviceType: this.form.serviceType.value,
-              password: this.form.password.value,
-              confirmPassword: this.form.confirmPassword.value,
-            });
-
-          addAccountancyInfoToLocalStorage(registerAccountancyServiceResponse);
+          await createAccountancyService({
+            firstName: this.form.firstName.value,
+            lastName: this.form.lastName.value,
+            email: this.form.email.value,
+            phone: this.form.phone.value,
+            company: this.form.company.value,
+            cnpj: this.form.cnpj.value,
+            clientsNumber: this.form.clientsNumber.value,
+            serviceType: this.form.serviceType.value,
+            password: this.form.password.value,
+            confirmPassword: this.form.confirmPassword.value,
+          });
 
           this.isBusy = false;
 
           this.$router.push({ name: "validate-account" });
         } catch (error) {
           this.isBusy = false;
-          this.serviceErrorMessage = error;
+          this.serviceErrorMessage = error
+            ? error
+            : "Não foi possível criar conta. Entre em contato ou tente novamente mais tarde.";
           this.$refs.toastError.show();
         }
       }

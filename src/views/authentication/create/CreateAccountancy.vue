@@ -11,7 +11,7 @@
 </template>
 <script>
 export default {
-  name: "app-register-user",
+  name: "app-create-user",
 
   data() {
     return {

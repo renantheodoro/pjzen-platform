@@ -6,7 +6,7 @@
 
     <div class="authentication__view">
       <div class="validate-success">
-        <router-link :to="{ name: 'register-accountancy-form' }">
+        <router-link :to="{ name: 'create-accountancy-form' }">
           <img
             src="@/assets/images/icons/pjzen-authentication.svg"
             class="authentication__view__logo"

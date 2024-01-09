@@ -8,10 +8,10 @@
   <Loader v-if="isBusy" />
 
   <form
-    @submit.prevent="validateAccount"
+    @submit.prevent="handleValidateAccount"
     class="form form--vertical form--validate-account"
   >
-    <router-link :to="{ name: 'register-accountancy-form' }"
+    <router-link :to="{ name: 'create-accountancy-form' }"
       ><img
         src="@/assets/images/icons/pjzen-authentication.svg"
         class="authentication__view__logo"
@@ -19,7 +19,11 @@
 
     <h2 class="authentication__view__title">Valide sua conta</h2>
 
-    <p>Digite aqui o código que você recebeu no email {{ maskedEmail }}</p>
+    <p>
+      <span v-if="hasSentEmail"
+        >Digite aqui o código que você recebeu no email {{ maskedEmail }}</span
+      >
+    </p>
 
     <div class="input-digits" :class="{ error: hasError }">
       <div class="input-digits__item">
@@ -75,7 +79,7 @@
       >
     </legend>
 
-    <legend v-if="!hasSentEmail && isTimerActive">
+    <legend v-if="hasSentEmail && isTimerActive">
       Enviar novamente em {{ timerText }}
     </legend>
 
@@ -100,13 +104,13 @@ import Loader from "@/components/Loader.vue";
 /**
  * Helpers
  * */
-import { getAccountancyInfoFromLocalStorage } from "@/helpers/local-storage";
+import { getAccountancyDataFromLocalStorage } from "@/helpers/local-storage";
 
 /**
  * Services
  * */
-import sendValidationCodeService from "@/services/send-validation-code-service";
-import validateAccountService from "@/services/validate-account-service";
+import sendValidationCodeService from "@/services/authentication/send-validation-code-service";
+import validateAccountService from "@/services/authentication/validate-account-service";
 
 export default {
   name: "app-validate-account",
@@ -135,12 +139,15 @@ export default {
         field5: null,
       },
 
-      accountancyInfo: null,
+      accountancyData: null,
     };
   },
 
   created() {
-    this.accountancyInfo = getAccountancyInfoFromLocalStorage();
+    const data = getAccountancyDataFromLocalStorage();
+    if (data) {
+      this.accountancyData = data;
+    }
   },
 
   computed: {
@@ -149,7 +156,26 @@ export default {
     },
 
     maskedEmail() {
-      return this.maskEmail(this.accountancyInfo.email);
+      if (typeof this.accountancyData.email !== "string") {
+        // Retorna o email original se não for uma string
+        return this.accountancyData.email;
+      }
+
+      if (this.accountancyData.email.length < 4) {
+        // Retorna o email original se tiver menos de 4 caracteres
+        return this.accountancyData.email;
+      }
+
+      const parts = this.accountancyData.email.split("@");
+      const username = parts[0];
+      const domain = parts[1];
+
+      const maskedUsername =
+        username.charAt(0) + "*".repeat(Math.min(username.length - 1, 8));
+      const maskedDomain =
+        "*".repeat(Math.min(domain.length - 4, 4)) + domain.slice(-4);
+
+      return `${maskedUsername}@${maskedDomain}`;
     },
 
     timerText() {
@@ -185,11 +211,15 @@ export default {
         if (this.timer > 0) {
           this.timer -= 1;
         } else {
-          clearInterval(this.timerInterval);
-          this.isTimerActive = false;
-          this.timer = 50;
+          this.stopTimer();
         }
       }, 1000);
+    },
+
+    stopTimer() {
+      clearInterval(this.timerInterval);
+      this.isTimerActive = false;
+      this.timer = 50;
     },
 
     focusNext(index) {
@@ -216,16 +246,24 @@ export default {
     },
 
     async sendValidationCode() {
-      this.startTimer();
+      this.isBusy = true;
 
       try {
         await sendValidationCodeService({
-          uid: this.accountancyInfo.uid,
-          email: this.accountancyInfo.email,
+          documentId: this.accountancyData.uid,
+          email: this.accountancyData.email,
         });
+        this.startTimer();
+        this.hasSentEmail = true;
       } catch (error) {
-        this.serviceErrorMessage = error;
+        this.serviceErrorMessage = error
+          ? error
+          : "Não foi possível criar conta. Entre em contato ou tente novamente mais tarde.";
         this.showError();
+        this.stopTimer();
+        this.hasSentEmail = false;
+      } finally {
+        this.isBusy = false;
       }
     },
 
@@ -235,13 +273,15 @@ export default {
       if (this.isFieldsValid) {
         try {
           await validateAccountService({
-            uid: this.accountancyInfo.uid,
+            documentId: this.accountancyData.uid,
             validationCode: parseInt(this.validationCode),
           });
 
           this.success();
         } catch (error) {
-          this.serviceErrorMessage = error;
+          this.serviceErrorMessage = error
+            ? error
+            : "Não foi possível criar conta. Entre em contato ou tente novamente mais tarde.";
           this.showError();
         } finally {
           this.isBusy = false;

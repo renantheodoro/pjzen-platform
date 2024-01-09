@@ -27,15 +27,15 @@
 
         <div class="form__section">
           <div
-            class="input-field"
+            class="input-field input-field--password"
             :class="{
               'input-field--error': form.password.isValid === false,
             }"
           >
-            <label for="register-accountancy--password">Crie sua senha</label>
+            <label for="create-accountancy--password">Crie sua senha</label>
             <input
-              id="register-accountancy--password"
-              type="password"
+              id="create-accountancy--password"
+              :type="passwordFieldType1"
               placeholder="Sua senha"
               v-model="form.password.value"
               @blur="
@@ -43,26 +43,41 @@
                 validateInputs();
               "
               class="input--darkened"
+              autocomplete="current-password"
             />
             <span
               v-if="form.password.isValid === false"
               class="helper-text helper-text--error"
               >{{ form.password.errorMessage }}</span
             >
+
+            <a
+              @click.prevent="togglePasswordView(1)"
+              class="input-field__password-button"
+            >
+              <img
+                src="@/assets/images/icons/eye-password.svg"
+                v-if="passwordFieldType1 === 'password'"
+              />
+              <img
+                src="@/assets/images/icons/eye-password-slash.svg"
+                v-if="passwordFieldType1 === 'text'"
+              />
+            </a>
           </div>
 
           <div
-            class="input-field"
+            class="input-field input-field--password"
             :class="{
               'input-field--error': form.confirmPassword.isValid === false,
             }"
           >
-            <label for="register-accountancy--confirmPassword"
+            <label for="create-accountancy--confirmPassword"
               >Confirme sua senha</label
             >
             <input
-              id="register-accountancy--confirmPassword"
-              type="password"
+              id="create-accountancy--confirmPassword"
+              :type="passwordFieldType2"
               placeholder="Repita sua senha"
               v-model="form.confirmPassword.value"
               @blur="
@@ -76,6 +91,20 @@
               class="helper-text helper-text--error"
               >{{ form.confirmPassword.errorMessage }}</span
             >
+
+            <a
+              @click.prevent="togglePasswordView(2)"
+              class="input-field__password-button"
+            >
+              <img
+                src="@/assets/images/icons/eye-password.svg"
+                v-if="passwordFieldType2 === 'password'"
+              />
+              <img
+                src="@/assets/images/icons/eye-password-slash.svg"
+                v-if="passwordFieldType2 === 'text'"
+              />
+            </a>
           </div>
 
           <button
@@ -96,17 +125,12 @@
  * Mixins
  * */
 import formMixin from "@/data/mixins/form-mixin.js";
-import registerPasswordModel from "@/data/models/register-new-password-model.js";
+import createNewPasswordModel from "@/data/models/create-new-password-model.js";
 
 /**
  * Services
  * */
-import registerNewPasswordService from "@/services/register-new-password-service";
-
-/**
- * Helpers
- * */
-// import { addLoginDataToLocalStorage } from "@/helpers/local-storage";
+import createNewPasswordService from "@/services/authentication/create-new-password-service.js";
 
 /**
  * Components
@@ -115,9 +139,9 @@ import Toast from "@/components/Toast.vue";
 import Loader from "@/components/Loader.vue";
 
 export default {
-  name: "app-register-new-password",
+  name: "app-create-new-password",
 
-  mixins: [formMixin, registerPasswordModel],
+  mixins: [formMixin, createNewPasswordModel],
 
   components: { Toast, Loader },
 
@@ -131,7 +155,8 @@ export default {
     return {
       isBusy: false,
 
-      passwordFieldType: "password",
+      passwordFieldType1: "password",
+      passwordFieldType2: "password",
 
       toast: {
         type: null,
@@ -157,6 +182,11 @@ export default {
   },
 
   methods: {
+    togglePasswordView(index) {
+      this[`passwordFieldType${index}`] =
+        this[`passwordFieldType${index}`] === "password" ? "text" : "password";
+    },
+
     validateInputs() {
       this.validatePasswords(this.form.password, this.form.confirmPassword);
     },
@@ -193,7 +223,7 @@ export default {
 
       if (this.isFormValid()) {
         try {
-          const recoveryPasswordResponse = await registerNewPasswordService({
+          const recoveryPasswordResponse = await createNewPasswordService({
             email: this.email,
             resetPasswordCode: this.resetPasswordCode,
             newPassword: this.form.password.value,

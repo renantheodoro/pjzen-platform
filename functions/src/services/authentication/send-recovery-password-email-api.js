@@ -1,20 +1,27 @@
 const admin = require("../../firebase/firebase-admin");
 const nodemailer = require("nodemailer");
-const { log, error } = require("firebase-functions/logger");
 const { ACCOUNTANCIES_COLLECTION } = require("../../data/collections");
+const errorHandler = require("../../data/error-handler");
+const { logApi } = require("../../data/log-api");
+const validateRequest = require("../common/validate-request");
+
+const apiServiceTitle = "SEND RECOVERY PASSWORD SERVICE";
 
 module.exports = {
   async call(req, res) {
-    const { email } = req.body;
+    const { authorization: apiKey } = req.headers;
 
-    log(
-      "[API] FIREBASE SEND RECOVERY PASSWORD SERVICE -> Iniciando envio de e-mail de recuperação de senha..."
+    if (!validateRequest(apiKey)) {
+      throw Error("unauthorized");
+    }
+
+    logApi(
+      apiServiceTitle,
+      "Iniciando envio de e-mail de recuperação de senha..."
     );
-
-    // TODO: adicionar a base da url dinamica para produção
-    const passwordRecoveryLink = "http://localhost:8080/cadastrar-nova-senha";
-
     try {
+      const { email } = req.body;
+
       // Gere um código de redefinição de senha manualmente
       const resetPasswordCode = Math.floor(
         100000000000000 + Math.random() * 900000000000000
@@ -34,6 +41,9 @@ module.exports = {
         "authenticationData.resetPasswordCode": resetPasswordCode,
       });
 
+      // TODO: adicionar a base da url dinamica para produção
+      const passwordRecoveryLink = "http://localhost:8080/cadastrar-nova-senha";
+
       // Crie um link personalizado que inclua o UID e o código de redefinição
       const customLink = `${passwordRecoveryLink}?email=${encodeURIComponent(
         email.trim()
@@ -43,14 +53,14 @@ module.exports = {
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: "renan.b.theodoro@gmail.com",
-          pass: "gsle zfwh kflu usmw",
+          user: "renan.b.theodoro@gmail.com", // TODO: adicionar email real
+          pass: "gsle zfwh kflu usmw", // TODO: adicionar pass real
         },
       });
 
       // Configurar as opções do e-mail
       const mailOptions = {
-        from: "pjzen@email.com",
+        from: "pjzen@email.com", // TODO: adicionar email real
         to: email,
         subject: "Recuperação de senha",
         text: `Clique no link a seguir para recuperar sua senha: \n ${customLink}`,
@@ -65,21 +75,17 @@ module.exports = {
         }
       });
 
-      log(
-        "[API] FIREBASE SEND RECOVERY PASSWORD SERVICE -> E-mail de recuperação de senha enviado com sucesso!"
-      );
+      const successMessage =
+        "Um link de recuperação de senha foi enviado ao seu e-mail! Cheque sua caixa de entrada.";
+      logApi(apiServiceTitle, successMessage);
 
-      res
-        .status(200)
-        .send(
-          "Um link de recuperação de senha foi enviado ao seu e-mail. Cheque sua caixa de entrada."
-        );
-    } catch (e) {
-      error(
-        "[API] FIREBASE SEND RECOVERY PASSWORD SERVICE -> Erro ao enviar o e-mail de recuperação de senha:",
-        e.message
-      );
-      res.status(500).send("Erro ao enviar o e-mail de recuperação de senha.");
+      res.status(200).send({
+        status: 200,
+        message: successMessage,
+      });
+    } catch (error) {
+      const errorResponse = errorHandler(error, apiServiceTitle);
+      res.status(errorResponse.status).send(errorResponse);
     }
   },
 };

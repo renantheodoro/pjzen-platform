@@ -1,12 +1,12 @@
 // AUTHENTICATION
 import Login from "@/views/authentication/Login.vue";
-import RegisterAccountancy from "@/views/authentication/register/RegisterAccountancy.vue";
-import RegisterAccountancyForm from "@/views/authentication/register/RegisterAccountancyForm.vue";
-import ValidateAccount from "@/views/authentication/register/ValidateAccount.vue";
-import ValidateSuccess from "@/views/authentication/register/ValidateSuccess.vue";
-import RecoveryPassword from "@/views/authentication/recover-password/RecoveryPassword.vue";
-import RegisterNewPassword from "@/views/authentication/recover-password/RegisterNewPassword.vue";
-import RecoveryPasswordSuccess from "@/views/authentication/recover-password/RecoveryPasswordSuccess.vue";
+import CreateAccountancy from "@/views/authentication/create/CreateAccountancy.vue";
+import CreateAccountancyForm from "@/views/authentication/create/CreateAccountancyForm.vue";
+import ValidateAccount from "@/views/authentication/create/ValidateAccount.vue";
+import ValidateSuccess from "@/views/authentication/create/ValidateSuccess.vue";
+import RecoveryPassword from "@/views/authentication/recovery-password/RecoveryPassword.vue";
+import CreateNewPassword from "@/views/authentication/recovery-password/CreateNewPassword.vue";
+import RecoveryPasswordSuccess from "@/views/authentication/recovery-password/RecoveryPasswordSuccess.vue";
 
 // INTERNAL
 import Dashboard from "@/views/internal/Dashboard.vue";
@@ -31,26 +31,39 @@ export default [
   },
   {
     path: "/cadastro",
-    component: RegisterAccountancy,
+    component: CreateAccountancy,
     meta: {
       pageName: "Cadastro",
       authGuard: false,
     },
+
     children: [
       {
-        path: "/",
-        component: RegisterAccountancyForm,
-        name: "register-accountancy-form",
+        path: "",
+        component: CreateAccountancyForm,
+        name: "create-accountancy-form",
+        meta: {
+          pageName: "Cadastro",
+          authGuard: false,
+        },
       },
       {
         path: "validar-conta",
         component: ValidateAccount,
         name: "validate-account",
+        meta: {
+          pageName: "Validar conta",
+          authGuard: false,
+        },
       },
       {
         path: "conta-validada",
         component: ValidateSuccess,
         name: "validate-success",
+        meta: {
+          pageName: "Validar conta sucesso",
+          authGuard: false,
+        },
       },
     ],
   },
@@ -65,8 +78,8 @@ export default [
   },
   {
     path: "/cadastrar-nova-senha",
-    name: "register-new-password",
-    component: RegisterNewPassword,
+    name: "create-new-password",
+    component: CreateNewPassword,
     meta: {
       pageName: "Cadastre uma nova senha",
       authGuard: false,
@@ -89,7 +102,7 @@ export default [
     component: Dashboard,
     meta: {
       pageName: "Dashboard",
-      authGuard: false,
+      authGuard: true,
     },
   },
   {
@@ -98,7 +111,7 @@ export default [
     component: ClientList,
     meta: {
       pageName: "Clientes",
-      authGuard: false,
+      authGuard: true,
     },
   },
   {
@@ -107,7 +120,7 @@ export default [
     component: ClientView,
     meta: {
       pageName: "Visão do cliente",
-      authGuard: false,
+      authGuard: true,
     },
   },
   {
@@ -116,7 +129,7 @@ export default [
     component: TaxInvoiceIssuance,
     meta: {
       pageName: "Emitir Nota Fiscal",
-      authGuard: false,
+      authGuard: true,
     },
   },
   {
@@ -125,7 +138,7 @@ export default [
     component: CompanyData,
     meta: {
       pageName: "Dados da Empresa",
-      authGuard: false,
+      authGuard: true,
     },
   },
   {
@@ -134,16 +147,16 @@ export default [
     component: DigitalCertificate,
     meta: {
       pageName: "Certificado Digital",
-      authGuard: false,
+      authGuard: true,
     },
   },
   {
     path: "/cadastrar-servico",
-    name: "register-service",
+    name: "create-service",
     component: RegisterService,
     meta: {
       pageName: "Cadastrar Serviço",
-      authGuard: false,
+      authGuard: true,
     },
   },
 

@@ -1,6 +1,7 @@
 import api from "@/services/config/api";
+import { errorLog } from "@/helpers/log";
 
-const sendRecoveryPasswordEmail = async (data) => {
+export default async (data) => {
   try {
     const { email } = data;
 
@@ -15,10 +16,13 @@ const sendRecoveryPasswordEmail = async (data) => {
 
     return response.data;
   } catch (error) {
-    const errorMessage = error.message;
-    console.error("[SEND RECOVERY PASSWORD EMAIL] Message ->", errorMessage);
+    let errorMessage = error?.response?.data?.message;
+
+    if (!errorMessage) {
+      errorMessage = "Ocorreu um erro desconhecido.";
+    }
+
+    errorLog(`SEND RECOVERY PASSWORD EMAIL: ${errorMessage} - ${error}`);
     throw errorMessage;
   }
 };
-
-export default sendRecoveryPasswordEmail;
