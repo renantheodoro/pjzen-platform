@@ -41,8 +41,8 @@ module.exports = {
         "authenticationData.resetPasswordCode": resetPasswordCode,
       });
 
-      // TODO: adicionar a base da url dinamica para produção
-      const passwordRecoveryLink = "http://localhost:8080/cadastrar-nova-senha";
+      // TODO: adicionar a base da url dinamica para podução
+      const passwordRecoveryLink = `https://pjzen-plataform-dev.web.app/cadastrar-nova-senha`;
 
       // Crie um link personalizado que inclua o UID e o código de redefinição
       const customLink = `${passwordRecoveryLink}?email=${encodeURIComponent(

@@ -1,6 +1,7 @@
+export const BASE_URL_LOCAL = process.env.VUE_APP_BASE_URL_LOCAL;
+export const BASE_URL_DEV = process.env.VUE_APP_BASE_URL_DEV;
 export const BASE_CLOUDFUNCTIONS_URL_LOCAL =
-  "http://localhost:5000/pjzen-plataform-dev/us-central1/app";
+  process.env.VUE_APP_BASE_CLOUDFUNCTIONS_URL_LOCAL;
 export const BASE_CLOUDFUNCTIONS_URL_DEV =
-  "https://us-central1-pjzen-platform-dev.cloudfunctions.net";
-export const BASE_CLOUDFUNCTIONS_URL_PROD =
-  "https://us-central1-pjzen-platform-dev.cloudfunctions.net";
+  process.env.VUE_APP_BASE_CLOUDFUNCTIONS_URL_DEV;
+export const BASE_CLOUDFUNCTIONS_URL_PROD = process.env.VUE_APP_BASE_URL_DEV;
