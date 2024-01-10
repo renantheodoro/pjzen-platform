@@ -1,3 +1,36 @@
+/**
+ * Serviço Firebase-Send-Validation-Code
+ *
+ * Este serviço é responsável por enviar um código de validação por e-mail para um usuário específico,
+ * com o objetivo de realizar a verificação de sua identidade. O código é armazenado no banco de dados associado ao usuário.
+ *
+ * Parâmetros de Entrada:
+ * - authorization (Header): Chave de autenticação para acessar o serviço.
+ * - documentId: Identificador único associado ao usuário no banco de dados.
+ * - email: Endereço de e-mail ao qual o código de validação será enviado.
+ *
+ * Funcionamento do Serviço:
+ * - Autenticação: O serviço requer uma chave de autorização (apiKey) para garantir acesso seguro.
+ * - Geração do Código: Um código de validação é gerado aleatoriamente.
+ * - Armazenamento do Código: O código de validação é armazenado no banco de dados associado ao usuário.
+ * - Envio de E-mail: Utilizando o serviço de transporte de e-mail (nodemailer), o serviço envia um e-mail contendo o código de validação.
+ * - Logs: Todas as ações do serviço são registradas por meio do módulo 'logApi'.
+ * - Erros: Em caso de falha, o serviço utiliza o módulo 'errorHandler' para gerar uma resposta adequada.
+ *
+ * Notas:
+ * - As informações de autenticação do e-mail (usuário e senha) devem ser configuradas adequadamente.
+ *
+ * Exemplo de Uso:
+ * ```
+ * POST /firebase-send-validation-code
+ * Headers: { authorization: 'API_KEY' }
+ * Body: {
+ *   documentId: 'uniqueUserId',
+ *   email: 'john.doe@example.com',
+ * }
+ * ```
+ */
+
 const admin = require("../../firebase/firebase-admin");
 const errorHandler = require("../../data/error-handler");
 const nodemailer = require("nodemailer");
