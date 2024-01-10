@@ -1,3 +1,37 @@
+/**
+ * Serviço Send-Recovery-Password
+ *
+ * Este serviço é responsável por enviar um e-mail de recuperação de senha a um usuário, incluindo um link
+ * personalizado para redefinição da senha. O código de redefinição é armazenado no banco de dados associado ao usuário.
+ *
+ * Parâmetros de Entrada:
+ * - authorization (Header): Chave de autenticação para acessar o serviço.
+ * - email: Endereço de e-mail associado ao usuário que esqueceu a senha.
+ *
+ * Funcionamento do Serviço:
+ * - Autenticação: O serviço requer uma chave de autorização (apiKey) para garantir acesso seguro.
+ * - Geração do Código: Um código de redefinição de senha é gerado aleatoriamente.
+ * - Obtendo UID: Utilizando o e-mail fornecido, o serviço obtém o UID do usuário no Firebase Authentication.
+ * - Armazenamento do Código: O código de redefinição é armazenado no banco de dados associado ao usuário.
+ * - Construção do Link: Um link personalizado é criado, incluindo o UID e o código de redefinição.
+ * - Envio de E-mail: Utilizando o serviço de transporte de e-mail (nodemailer), o serviço envia um e-mail contendo o link de recuperação.
+ * - Logs: Todas as ações do serviço são registradas por meio do módulo 'logApi'.
+ * - Erros: Em caso de falha, o serviço utiliza o módulo 'errorHandler' para gerar uma resposta adequada.
+ *
+ * Notas:
+ * - O link de recuperação é configurado para redirecionar o usuário para a página de cadastro de nova senha.
+ * - As informações de autenticação do e-mail (usuário e senha) e a base da URL dinâmica para produção devem ser configuradas adequadamente.
+ *
+ * Exemplo de Uso:
+ * ```
+ * POST /send-recovery-password
+ * Headers: { authorization: 'API_KEY' }
+ * Body: {
+ *   email: 'john.doe@example.com',
+ * }
+ * ```
+ */
+
 const admin = require("../../firebase/firebase-admin");
 const nodemailer = require("nodemailer");
 const { ACCOUNTANCIES_COLLECTION } = require("../../data/collections");

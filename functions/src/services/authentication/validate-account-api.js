@@ -1,3 +1,36 @@
+/**
+ * Serviço Firebase-Validate-Account
+ *
+ * Este serviço é responsável por validar o código de verificação enviado por e-mail
+ * durante o processo de criação da conta. Ele verifica se o código inserido pelo usuário
+ * corresponde ao código armazenado no banco de dados associado à conta.
+ *
+ * Parâmetros de Entrada:
+ * - authorization (Header): Chave de autenticação para acessar o serviço.
+ * - documentId: Identificador único associado ao usuário no banco de dados.
+ * - validationCode: Código de verificação enviado ao usuário por e-mail.
+ *
+ * Funcionamento do Serviço:
+ * - Autenticação: O serviço requer uma chave de autorização (apiKey) para garantir acesso seguro.
+ * - Validação de Parâmetros: Verifica se os parâmetros fornecidos são válidos.
+ * - Obtendo Código Armazenado: Obtém o código de verificação armazenado no banco de dados.
+ * - Comparação de Códigos: Compara o código inserido pelo usuário com o código armazenado.
+ * - Marcar E-mail como Verificado: Caso os códigos correspondam, marca o e-mail como verificado no Firebase Authentication.
+ * - Limpar Código de Verificação: Limpa o código de verificação armazenado no banco de dados.
+ * - Logs: Todas as ações do serviço são registradas por meio do módulo 'logApi'.
+ * - Erros: Em caso de falha, o serviço utiliza o módulo 'errorHandler' para gerar uma resposta adequada.
+ *
+ * Exemplo de Uso:
+ * ```
+ * POST /firebase-validate-account
+ * Headers: { authorization: 'API_KEY' }
+ * Body: {
+ *   documentId: 'uniqueUserId',
+ *   validationCode: 12345,
+ * }
+ * ```
+ */
+
 const admin = require("../../firebase/firebase-admin");
 const getDocumentByIdApi = require("../common/get-document-by-id");
 const { logApi } = require("../../data/log-api");

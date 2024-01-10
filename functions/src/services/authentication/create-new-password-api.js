@@ -1,3 +1,40 @@
+/**
+ * Serviço Create-New-Password
+ *
+ * Este serviço é responsável por permitir a atualização da senha de um usuário no sistema. O serviço
+ * opera principalmente com entidades relacionadas a contabilidades e utiliza o código de redefinição de senha
+ * para garantir a segurança do processo.
+ *
+ * Parâmetros de Entrada:
+ * - authorization (Header): Chave de autenticação para acessar o serviço.
+ * - email: Endereço de e-mail associado ao usuário que deseja redefinir a senha.
+ * - resetPasswordCode: Código de redefinição de senha enviado ao usuário.
+ * - newPassword: Nova senha desejada para o usuário.
+ *
+ * Funcionamento do Serviço:
+ * - Autenticação: O serviço requer uma chave de autorização (apiKey) para garantir acesso seguro.
+ * - Obtendo UID: Utilizando o e-mail fornecido, o serviço obtém o UID do usuário no Firebase Authentication.
+ * - Verificação do Código: Com o UID, o serviço compara o código de redefinição fornecido com o armazenado no banco de dados.
+ * - Atualização da Senha: Se o código for válido, a senha do usuário é atualizada no Firebase Authentication.
+ * - Limpeza do Código: Após a atualização bem-sucedida, o código de redefinição é limpo no banco de dados.
+ * - Logs: Todas as ações do serviço são registradas por meio do módulo 'logApi'.
+ * - Erros: Em caso de falha, o serviço utiliza o módulo 'errorHandler' para gerar uma resposta adequada.
+ *
+ * Nota: O serviço também permite a verificação da nova senha em relação à anterior (comentado como TODO),
+ * mas essa verificação pode ser habilitada conforme os requisitos específicos do sistema.
+ *
+ * Exemplo de Uso:
+ * ```
+ * POST /create-new-password
+ * Headers: { authorization: 'API_KEY' }
+ * Body: {
+ *   email: 'john.doe@example.com',
+ *   resetPasswordCode: 123456,
+ *   newPassword: 'newSecurePassword123'
+ * }
+ * ```
+ */
+
 const admin = require("../../firebase/firebase-admin");
 const getDocumentByIdApi = require("../common/get-document-by-id");
 const { logApi } = require("../../data/log-api");
