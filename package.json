@@ -11,6 +11,7 @@
     "deploy:functions": "cd functions && firebase deploy --only functions"
   },
   "dependencies": {
+    "@firebase/logger": "^0.4.0",
     "axios": "^1.6.2",
     "core-js": "^3.8.3",
     "cors": "^2.8.5",
