@@ -1,9 +1,16 @@
 const { errorApi } = require("../data/log-api");
 
 module.exports = (error, apiServiceTitle) => {
-  const errorDescription = error?.errorInfo?.code
-    ? error?.errorInfo?.code
-    : error?.code;
+  let errorDescription;
+
+  if (error?.errorInfo?.code) {
+    errorDescription = error?.errorInfo?.code;
+  } else if (error?.code) {
+    errorDescription = error?.code;
+  } else {
+    errorDescription = error;
+  }
+
   const errorDetails = error?.errorInfo?.message
     ? error?.errorInfo?.message
     : error;
@@ -22,6 +29,10 @@ module.exports = (error, apiServiceTitle) => {
       errorText = "A senha fornecida é fraca. Deve ter pelo menos 6 caracteres";
       errorStatus = 400; // Bad Request
       break;
+    case "file-not-blob":
+      errorText = "O arquivo recebido não tem o formato válido";
+      errorStatus = 400; // Bad Request
+      break;
     case "auth/unauthenticated":
       errorText =
         "Usuário não autenticado. Faça login antes de realizar esta operação";
@@ -35,10 +46,19 @@ module.exports = (error, apiServiceTitle) => {
       errorText = "Senha incorreta. Tente novamente";
       errorStatus = 401; // Unauthorized
       break;
+    case "auth/id-token-expired":
+      errorText = "Token de autenticação expirado. Faça login novamente.";
+      errorStatus = 401; // Unauthorized
+      break;
     case "unauthorized":
     case "auth/invalid-api-key":
       errorText = "Requisição não autorizada";
       errorStatus = 401; // Unauthorized
+      break;
+    case "storage/unauthorized":
+      errorText =
+        "Permissão negada. Não foi possível gravar dados no armazenamento. Por favor, verifique suas credenciais e certifique-se de ter as permissões adequadas para acessar o armazenamento.";
+      errorStatus = 403; // Forbidden
       break;
     case "auth/permission-denied":
       errorText =

@@ -1,3 +1,16 @@
+.drag-and-drop-holder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+
+  .helper-text {
+    margin-top: 0;
+  }
+}
+
 .drag-and-drop {
   border-radius: to-rem(8px);
   border: 1px dashed palette("blue");

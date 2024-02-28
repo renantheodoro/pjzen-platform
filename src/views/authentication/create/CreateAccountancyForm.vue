@@ -94,6 +94,7 @@
             >{{ form.email.errorMessage }}</span
           >
         </div>
+        
         <div
           class="input-field"
           :class="{
@@ -215,7 +216,6 @@
           >
             <select
               id="create-accountancy--serviceType"
-              type="text"
               v-model="form.serviceType.value"
               @blur="
                 visit('serviceType');

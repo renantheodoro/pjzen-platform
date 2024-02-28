@@ -1,17 +1,21 @@
-<template lang="">
-  <div class="datepicker-holder width-full" :class="{ 'input--darkened': darkened }">
+<template>
+  <div
+    class="datepicker-holder width-full"
+    :class="{ 'input--darkened': darkened }"
+  >
     <Datepicker
+      ref="datepickerRef"
       v-model="picked"
       inputFormat="dd/MM/yyyy"
       :locale="ptBRLocale"
     />
   </div>
 </template>
+
 <script>
 import Datepicker from "vue3-datepicker";
-import { ref } from "vue";
-const picked = ref(new Date());
 import ptBR from "date-fns/locale/pt-BR";
+import { ref } from "vue";
 
 export default {
   name: "app-date-picker",
@@ -26,9 +30,34 @@ export default {
 
   data() {
     return {
-      picked: picked,
+      picked: ref(new Date()),
       ptBRLocale: ptBR,
     };
+  },
+
+  watch: {
+    picked(newValue) {
+      this.$emit("pickedChanged", newValue);
+      this.removeFocusFromInput();
+    },
+  },
+
+  methods: {
+    removeFocusFromInput() {
+      const datepickerElement = this.$refs.datepickerRef.$el;
+
+      const inputInsideDatepicker = datepickerElement.querySelector(
+        ".v3dp__datepicker input"
+      );
+
+      if (inputInsideDatepicker) {
+        inputInsideDatepicker.blur();
+      }
+    },
+  },
+
+  created() {
+    this.$emit("pickedChanged", this.picked);
   },
 
   mounted() {
@@ -46,4 +75,5 @@ export default {
   components: { Datepicker },
 };
 </script>
+
 <style lang=""></style>

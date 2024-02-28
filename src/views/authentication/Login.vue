@@ -1,10 +1,11 @@
 <template lang="">
   <Toast
-    ref="toastError"
-    type="error"
-    title="Falha ao realizar login"
-    :text="serviceErrorMessage"
+    ref="toast"
+    :type="toast.type"
+    :title="toast.title"
+    :text="toast.message"
   />
+
   <Loader v-if="isBusy" />
 
   <div class="authentication">
@@ -153,8 +154,21 @@ export default {
       isBusy: false,
 
       passwordFieldType: "password",
-      serviceErrorMessage: null,
+
+      toast: {
+        type: null,
+        message: null,
+        title: null,
+      },
     };
+  },
+
+  mounted() {
+    const isExpiredSession = this.$route.query.expiredSession;
+
+    if (isExpiredSession) {
+      this.showWarningToast("Realize o login novamente.", "Sessão expirada!");
+    }
   },
 
   methods: {
@@ -184,6 +198,24 @@ export default {
       return false;
     },
 
+    showErrorToast(message) {
+      this.toast = {
+        type: "error",
+        message: message,
+        title: "Falha ao recuperar senha",
+      };
+      this.$refs.toast.show();
+    },
+
+    showWarningToast(message, title) {
+      this.toast = {
+        type: "warning",
+        message: message,
+        title: title,
+      };
+      this.$refs.toast.show();
+    },
+
     async handleLogin() {
       this.isBusy = true;
 
@@ -199,9 +231,7 @@ export default {
           this.isBusy = false;
         } catch (error) {
           this.isBusy = false;
-
-          this.serviceErrorMessage = error.toString();
-          this.$refs.toastError.show();
+          this.showErrorToast(error.toString());
         }
       }
     },

@@ -25,8 +25,14 @@
         </div>
 
         <div v-else class="input-field width-full no-mgn-b">
-          <button @click="$emit('onButtonAction')" class="button button--action button--outline">
-            <img src="@/assets/images/icons/plus-blue.svg" class="button--action__icon" />
+          <button
+            @click="$emit('onButtonAction')"
+            class="button button--action button--outline"
+          >
+            <img
+              src="@/assets/images/icons/plus-blue.svg"
+              class="button--action__icon"
+            />
             {{ buttonActionText }}
           </button>
 
@@ -76,7 +82,10 @@
         </thead>
 
         <tbody>
-          <tr v-for="(bodyList, index) in tableContent.body" :key="index">
+          <tr
+            v-for="(bodyList, bodyIndex) in tableContent.body"
+            :key="bodyIndex"
+          >
             <td v-for="(bodyItem, index) in bodyList" :key="index">
               <div
                 v-if="bodyItem.type === 'checkbox'"
@@ -157,7 +166,7 @@
               </Dropdown>
               <Dropdown v-else>
                 <li>
-                  <a @click.prevent>
+                  <a @click.prevent="$emit('onOpenProfile', bodyIndex)">
                     <img src="@/assets/images/icons/dropdown-plus.svg" />
                     Abrir perfil
                   </a>
@@ -244,7 +253,6 @@ export default {
   },
 
   created() {
-    // TODO: Colocar o conteudo real
     this.tableContent = this.content;
   },
 
@@ -253,7 +261,6 @@ export default {
       console.log("search list");
     },
   },
-
 
   components: {
     Dropdown,

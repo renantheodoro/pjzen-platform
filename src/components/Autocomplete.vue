@@ -9,6 +9,7 @@
         @focusin="focusIn = true"
         @input="$emit('input', $value)"
         v-model="currentValue"
+        @blur="$emit('blur')"
       />
 
       <img
@@ -33,6 +34,10 @@
         </li>
       </ul>
     </label>
+
+    <span v-if="hasError" class="helper-text helper-text--error">{{
+      errorMessage
+    }}</span>
   </div>
 </template>
 <script>
@@ -50,6 +55,14 @@ export default {
     },
     itemList: {
       type: Array,
+      required: true,
+    },
+    hasError: {
+      type: Boolean,
+      required: true,
+    },
+    errorMessage: {
+      type: String,
       required: true,
     },
   },
@@ -77,6 +90,8 @@ export default {
     selectItem(item) {
       this.currentValue = item;
       this.focusIn = false;
+
+      this.$emit("onSelect", this.currentValue);
     },
   },
 

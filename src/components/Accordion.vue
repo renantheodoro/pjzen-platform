@@ -1,4 +1,4 @@
-<template lang="">
+<template>
   <div :ref="ref" class="accordion card">
     <div class="accordion__header" @click="toggleAccordion">
       {{ header }}
@@ -13,6 +13,7 @@
     </div>
   </div>
 </template>
+
 <script>
 export default {
   name: "app-accordion",
@@ -32,26 +33,36 @@ export default {
   },
 
   methods: {
-    closeAllAccordions() {
-      const accordions = document.getElementsByClassName("accordion");
-
-      for (let i = 0; i < accordions.length; i++) {
-        accordions[i].classList.remove("active");
-      }
-    },
-
     toggleAccordion() {
       const currentAccordion = this.$refs[this.ref];
-      const openAccordion =
-        !currentAccordion.classList.value.includes("active");
+      this.closeAllAccordions(currentAccordion);
+      currentAccordion.classList.toggle("active");
+    },
 
-      this.closeAllAccordions();
+    closeAllAccordions(excludeAccordion) {
+      Object.values(this.$refs).forEach((accordion) => {
+        if (accordion !== excludeAccordion) {
+          accordion.classList.remove("active");
+        }
+      });
+    },
 
-      if (openAccordion) {
-        currentAccordion.classList.add("active");
+    openFirstAccordion() {
+      if (this.id === "1") {
+        const currentAccordion = this.$refs[this.ref];
+
+        currentAccordion.classList.toggle("active");
+        this.closeAllAccordions(currentAccordion);
       }
     },
   },
+
+  mounted() {
+    this.openFirstAccordion();
+  },
 };
 </script>
-<style lang=""></style>
+
+<style scoped>
+/* Adicione estilos conforme necessário */
+</style>

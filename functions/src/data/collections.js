@@ -1,1 +1,11 @@
-module.exports = { ACCOUNTANCIES_COLLECTION: "accountancies" };
+const ACCOUNTANCIES_COLLECTION = "accountancies";
+const CLIENT_COMPANIES_COLLECTION = "client-companies";
+const CLIENT_SERVICES_COLLECTION = "client-services";
+const CLIENT_DIGITAL_CERTIFICATE_COLLECTION = "client-digital-certificate";
+
+module.exports = {
+  ACCOUNTANCIES_COLLECTION,
+  CLIENT_COMPANIES_COLLECTION,
+  CLIENT_SERVICES_COLLECTION,
+  CLIENT_DIGITAL_CERTIFICATE_COLLECTION,
+};

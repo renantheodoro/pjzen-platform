@@ -2,29 +2,36 @@ import api from "@/services/config/api";
 import { errorLog } from "@/helpers/log";
 import { getTokenFromSessionStorage } from "@/helpers/session-storage";
 
-export const verifyToken = async () => {
+const verifyToken = async () => {
   try {
     const accessToken = getTokenFromSessionStorage();
 
     if (!accessToken) {
-      throw Error("Token inválido");
+      throw new Error("Token inválido");
     }
 
     const response = await api().post("verify-token", { token: accessToken });
-
-    if (response?.data?.data?.token) {
-      return true;
-    } else {
-      return false;
-    }
+    return !!response?.data?.data?.token;
   } catch (error) {
-    let errorMessage = error?.response?.data?.message;
-
-    if (!errorMessage) {
-      errorMessage = "Ocorreu um erro desconhecido.";
-    }
-
+    const errorMessage =
+      error?.response?.data || "Ocorreu um erro desconhecido.";
     errorLog(`INTERCEPTOR SERVICE: ${errorMessage} - ${error}`);
     return false;
   }
 };
+
+const validateToken = async () => {
+  try {
+    const isSessionValid = await verifyToken();
+    if (!isSessionValid) {
+      throw new Error("Token inválido");
+    }
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Ocorreu um erro desconhecido.";
+    errorLog(`INTERCEPTOR SERVICE: ${errorMessage} - ${error}`);
+    return false;
+  }
+};
+
+export { verifyToken, validateToken };
