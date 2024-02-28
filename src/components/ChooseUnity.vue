@@ -5,14 +5,14 @@
       class="choose-unity__item"
       :class="{ selected: optionSelected === option1 }"
     >
-      {{ option1 }}
+      {{ text1 }}
     </div>
     <div
       @click="select(option2)"
       class="choose-unity__item"
-    :class="{ selected: optionSelected === option2 }"
+      :class="{ selected: optionSelected === option2 }"
     >
-      {{ option2 }}
+      {{ text2 }}
     </div>
   </div>
 </template>
@@ -22,7 +22,9 @@ export default {
 
   props: {
     option1: String,
+    text1: String,
     option2: String,
+    text2: String,
   },
 
   data() {
@@ -34,9 +36,12 @@ export default {
   methods: {
     select(option) {
       this.optionSelected = option;
-
       this.$emit("onSelectOption", option);
     },
+  },
+
+  mounted() {
+    this.$emit("onSelectOption", this.optionSelected);
   },
 };
 </script>

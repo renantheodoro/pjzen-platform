@@ -13,7 +13,7 @@ import Dashboard from "@/views/internal/Dashboard.vue";
 import ClientList from "@/views/internal/ClientList.vue";
 import ClientView from "@/components/ClientView.vue";
 import TaxInvoiceIssuance from "@/views/internal/TaxInvoiceIssuance.vue";
-import CompanyData from "@/views/internal/CompanyData.vue";
+import CompanyData from "@/views/internal/CreateClientCompany.vue";
 import DigitalCertificate from "@/views/internal/DigitalCertificate.vue";
 import RegisterService from "@/views/internal/RegisterService.vue";
 import NotFound from "@/views/internal/NotFound.vue";
@@ -28,12 +28,12 @@ export default [
       pageName: "Login",
       authGuard: false,
     },
+    props: (route) => ({ expiredSession: route.query.expiredSession }),
   },
   {
     path: "/cadastro",
     component: CreateAccountancy,
     meta: {
-      pageName: "Cadastro",
       authGuard: false,
     },
 
@@ -124,7 +124,7 @@ export default [
     },
   },
   {
-    path: "/emitir-nota-fiscal",
+    path: "/emitir-nota-fiscal/:id",
     name: "tax-invoice-issuance",
     component: TaxInvoiceIssuance,
     meta: {
@@ -133,7 +133,7 @@ export default [
     },
   },
   {
-    path: "/dados-da-empresa",
+    path: "/dados-da-empresa/:id",
     name: "company-data",
     component: CompanyData,
     meta: {
@@ -142,7 +142,7 @@ export default [
     },
   },
   {
-    path: "/certificado-digital",
+    path: "/certificado-digital/:id",
     name: "digital-certificate",
     component: DigitalCertificate,
     meta: {
@@ -151,7 +151,7 @@ export default [
     },
   },
   {
-    path: "/cadastrar-servico",
+    path: "/cadastrar-servico/:id",
     name: "create-service",
     component: RegisterService,
     meta: {

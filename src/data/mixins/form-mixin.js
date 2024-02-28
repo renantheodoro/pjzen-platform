@@ -1,4 +1,4 @@
-import ZipcodeService from "@/services/validate-cep-service.js";
+import validateZipcode from "@/services/validate-cep-service.js";
 import { mask } from "vue-the-mask";
 
 export default {
@@ -14,6 +14,7 @@ export default {
         invalidCardNumber: "O número do cartão é inválido",
         invalidCNPJMessage: "CNPJ inválido",
         invalidCPFMessage: "CPF inválido",
+        invalidDateMessage: "Formato de data inválida",
         documentMessage: "Documento inválido",
         invalidExpirationDateMessage: "Data de vencimento inválida",
         invalidCodeNumber: "Código de segurança inválido",
@@ -120,39 +121,73 @@ export default {
       if (!this.validateNotEmpty(value)) {
         return false;
       }
-      return value.length === 2;
+
+      const ufs = [
+        "AC",
+        "AL",
+        "AP",
+        "AM",
+        "BA",
+        "CE",
+        "DF",
+        "ES",
+        "GO",
+        "MA",
+        "MT",
+        "MS",
+        "MG",
+        "PA",
+        "PB",
+        "PR",
+        "PE",
+        "PI",
+        "RJ",
+        "RN",
+        "RS",
+        "RO",
+        "RR",
+        "SC",
+        "SP",
+        "SE",
+        "TO",
+      ];
+
+      // Verifica se o valor é uma string não vazia
+      if (typeof value !== "string" || value.trim().length === 0) {
+        return false;
+      }
+
+      // Converte a UF para maiúsculas (caso não esteja)
+      const uf = value.toUpperCase();
+
+      // Verifica se a UF é válida
+      return ufs.includes(uf);
     },
 
     async validateZipcode(value) {
       this.isBusy = true;
 
-      const response = await ZipcodeService.validateZipcode(value);
+      const response = await validateZipcode(value);
 
-      if (response.error) {
+      if (!response || response.error) {
         return false;
       }
 
-      const data = response.data;
+      if (response) {
+        this.form.zipcode.value = response.cep ?? "";
+        this.form.street.value = response.logradouro ?? "";
+        this.form.neighborhood.value = response.bairro ?? "";
+        this.form.city.value = response.localidade ?? "";
+        this.form.uf.value = response.uf ?? "";
 
-      const neighborhood = data.bairro;
-      const zipcode = data.cep;
-      const city = data.localidade;
-      const street = data.logradouro;
-      const uf = data.uf;
+        this.visit("zipcode");
+        this.visit("street");
+        this.visit("neighborhood");
+        this.visit("city");
+        this.visit("uf");
 
-      this.form.personalAddress.zipcode.value = zipcode;
-      this.form.personalAddress.street.value = street;
-      this.form.personalAddress.neighborhood.value = neighborhood;
-      this.form.personalAddress.city.value = city;
-      this.form.personalAddress.uf.value = uf;
-
-      this.visit("personalAddress", "zipcode");
-      this.visit("personalAddress", "street");
-      this.visit("personalAddress", "neighborhood");
-      this.visit("personalAddress", "city");
-      this.visit("personalAddress", "uf");
-
-      this.validateInputs();
+        this.validateInputs();
+      }
 
       this.isBusy = false;
 
@@ -167,6 +202,56 @@ export default {
       return new RegExp(
         /(([0-9]{2}[.]?[0-9]{3}[.]?[0-9]{3}[/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[.]?[0-9]{3}[.]?[0-9]{3}[-]?[0-9]{2}))/
       ).test(value);
+    },
+
+    formatDate(date) {
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+
+      return `${day}/${month}/${year}`;
+    },
+
+    validateDate(value) {
+      const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+      if (!dateRegex.test(value)) {
+        return false;
+      }
+
+      // Obtém o dia, mês e ano da string
+      const [day, month, year] = value.split("/").map(Number);
+
+      // Verifica se o ano é bissexto
+      const isLeapYear =
+        (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+
+      // Define a quantidade de dias em cada mês
+      const daysInMonth = [
+        31,
+        isLeapYear ? 29 : 28,
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31,
+      ];
+
+      // Verifica se o mês está dentro do intervalo válido
+      if (month < 1 || month > 12) {
+        return false;
+      }
+
+      // Verifica se o dia está dentro do intervalo válido para o mês
+      if (day < 1 || day > daysInMonth[month - 1]) {
+        return false;
+      }
+
+      return true;
     },
 
     validateCardNumber(value) {

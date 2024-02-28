@@ -58,7 +58,7 @@ module.exports = {
     const { authorization: apiKey } = req.headers;
 
     if (!validateRequest(apiKey)) {
-      throw Error("unauthorized");
+      throw "unauthorized";
     }
 
     const { email, resetPasswordCode, newPassword } = req.body;

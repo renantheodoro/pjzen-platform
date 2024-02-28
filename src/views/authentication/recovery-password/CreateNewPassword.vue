@@ -238,7 +238,11 @@ export default {
         } catch (error) {
           this.isBusy = false;
 
-          this.showErrorToast(error);
+          const errorMessage = error
+            ? error
+            : "Não foi possível criar conta. Entre em contato ou tente novamente mais tarde.";
+
+          this.showErrorToast(errorMessage);
         }
       }
     },
