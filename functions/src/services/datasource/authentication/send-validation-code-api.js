@@ -1,0 +1,102 @@
+/**
+ * Serviço Firebase-Send-Validation-Code
+ *
+ * Este serviço é responsável por enviar um código de validação por e-mail para um usuário específico,
+ * com o objetivo de realizar a verificação de sua identidade. O código é armazenado no banco de dados associado ao usuário.
+ *
+ * Parâmetros de Entrada:
+ * - authorization (Header): Chave de autenticação para acessar o serviço.
+ * - documentId: Identificador único associado ao usuário no banco de dados.
+ * - email: Endereço de e-mail ao qual o código de validação será enviado.
+ *
+ * Funcionamento do Serviço:
+ * - Autenticação: O serviço requer uma chave de autorização (apiKey) para garantir acesso seguro.
+ * - Geração do Código: Um código de validação é gerado aleatoriamente.
+ * - Armazenamento do Código: O código de validação é armazenado no banco de dados associado ao usuário.
+ * - Envio de E-mail: Utilizando o serviço de transporte de e-mail (nodemailer), o serviço envia um e-mail contendo o código de validação.
+ * - Logs: Todas as ações do serviço são registradas por meio do módulo 'logApi'.
+ * - Erros: Em caso de falha, o serviço utiliza o módulo 'errorHandler' para gerar uma resposta adequada.
+ *
+ * Notas:
+ * - As informações de autenticação do e-mail (usuário e senha) devem ser configuradas adequadamente.
+ *
+ * Exemplo de Uso:
+ * ```
+ * POST /firebase-send-validation-code
+ * Headers: { authorization: 'API_KEY' }
+ * Body: {
+ *   documentId: 'uniqueUserId',
+ *   email: 'john.doe@example.com',
+ * }
+ * ```
+ */
+
+const admin = require("../../../firebase/firebase-admin");
+const errorHandler = require("../../../data/error-handler");
+const nodemailer = require("nodemailer");
+const { ACCOUNTANCIES_COLLECTION } = require("../../../data/collections");
+const { logApi } = require("../../../data/log-api");
+const validateRequest = require("../../common/validate-request");
+
+const apiServiceTitle = "FIREBASE SEND VALIDATION CODE";
+
+module.exports = {
+  async call(req, res) {
+    const { authorization: apiKey } = req.headers;
+
+    if (!validateRequest(apiKey)) {
+      throw "unauthorized";
+    }
+
+    const { documentId, email } = req.body;
+
+    logApi(apiServiceTitle, "Iniciando envio de código de validação...");
+
+    const validationCode = Math.floor(10000 + Math.random() * 90000);
+
+    try {
+      const userDocRef = admin
+        .firestore()
+        .collection(ACCOUNTANCIES_COLLECTION)
+        .doc(documentId);
+
+      await userDocRef.update({
+        "authenticationData.validationCode": validationCode,
+      });
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "renan.b.theodoro@gmail.com", // TODO: adicionar o e-mail real
+          pass: "gsle zfwh kflu usmw", // TODO: adicionar o password real
+        },
+      });
+
+      const mailOptions = {
+        from: "pjzen@email.com",
+        to: email,
+        subject: "Código de Verificação",
+        text: `Seu código de verificação é: ${validationCode}`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error("Erro ao enviar o e-mail:", error);
+        } else {
+          console.log("E-mail enviado com sucesso:", info.response);
+        }
+      });
+
+      const successMessage = "Código enviado com sucesso!";
+      logApi(apiServiceTitle, successMessage);
+
+      res.status(200).send({
+        status: 200,
+        message: successMessage,
+      });
+    } catch (error) {
+      const errorResponse = errorHandler(error, apiServiceTitle);
+      res.status(errorResponse.status).send(errorResponse);
+    }
+  },
+};

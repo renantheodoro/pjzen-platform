@@ -1,25 +1,20 @@
 const functions = require("firebase-functions");
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors = require("cors");
-const morgan = require("morgan");
 const routes = require("./src/services/routes");
 const dotenv = require("dotenv");
 
 const app = express();
 
-// Configuração do ambiente usando dotenv (se necessário)
+// Configuração do ambiente usando dotenv
 dotenv.config();
 
-// Middlewares
-app.use(morgan("combined"));
+// Middleware para lidar com formulários codificados em URL e JSON
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors());
 
 // Rotas
 routes(app);
 
-// app.listen(process.env.SERVER_PORT);
-app.listen();
-
+// Exportando o aplicativo do Firebase Functions
 exports.app = functions.https.onRequest(app);

@@ -16,4 +16,14 @@ const errorApi = (apiServiceTitle, message, details) => {
   }
 };
 
-module.exports = { logApi, errorApi };
+const plugNotasErrorApi = (apiServiceTitle, message, details) => {
+  if (details) {
+    error(
+      `[PLUG NOTAS RESPONSE] ${apiServiceTitle} -> ${message}: "${details}"`
+    );
+  } else {
+    error(`[PLUG NOTAS RESPONSE] ${apiServiceTitle} -> ${message}.`);
+  }
+};
+
+module.exports = { logApi, errorApi, plugNotasErrorApi };
