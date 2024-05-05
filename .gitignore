@@ -15,9 +15,17 @@ pnpm-debug.log*
 
 # Editor directories and files
 .idea
-.vscode
+.vscode``
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# firebase
+.firebase/
+
+# funtions
+/functions/node_modules
+/functions/.env
+/functions/package-lock.json
