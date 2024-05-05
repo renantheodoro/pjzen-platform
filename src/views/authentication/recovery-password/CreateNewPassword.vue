@@ -56,11 +56,11 @@
               class="input-field__password-button"
             >
               <img
-                src="@/assets/images/icons/eye-password.svg"
+                src="@/assets/images/icons/eye-password-slash.svg"
                 v-if="passwordFieldType1 === 'password'"
               />
               <img
-                src="@/assets/images/icons/eye-password-slash.svg"
+                src="@/assets/images/icons/eye-password.svg"
                 v-if="passwordFieldType1 === 'text'"
               />
             </a>
@@ -97,11 +97,11 @@
               class="input-field__password-button"
             >
               <img
-                src="@/assets/images/icons/eye-password.svg"
+                src="@/assets/images/icons/eye-password-slash.svg"
                 v-if="passwordFieldType2 === 'password'"
               />
               <img
-                src="@/assets/images/icons/eye-password-slash.svg"
+                src="@/assets/images/icons/eye-password.svg"
                 v-if="passwordFieldType2 === 'text'"
               />
             </a>
@@ -238,9 +238,14 @@ export default {
         } catch (error) {
           this.isBusy = false;
 
-          const errorMessage = error
-            ? error
-            : "Não foi possível criar conta. Entre em contato ou tente novamente mais tarde.";
+          let errorMessage;
+
+          if (error != null && typeof error === "string") {
+            errorMessage = error;
+          } else {
+            errorMessage =
+              "Não foi possível criar conta. Tente novamente mais tarde.";
+          }
 
           this.showErrorToast(errorMessage);
         }

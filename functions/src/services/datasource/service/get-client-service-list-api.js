@@ -10,7 +10,7 @@ const apiServiceTitle = "GET CLIENT SERVICE LIST";
 module.exports = {
   async call(req, res) {
     const { authorization: apiKey } = req.headers;
-    const { companyUid } = req.body;
+    const { companyUid } = req.params;
 
     try {
       if (!validateRequest(apiKey)) {
@@ -23,7 +23,9 @@ module.exports = {
 
       logApi(apiServiceTitle, "Buscando lista de serviços...");
 
-      const companyDocRef = await getDoc(doc(config.db, CLIENT_COMPANIES_COLLECTION, companyUid));
+      const companyDocRef = await getDoc(
+        doc(config.db, CLIENT_COMPANIES_COLLECTION, companyUid)
+      );
 
       if (!companyDocRef.exists()) {
         throw "error/not-found";
@@ -34,8 +36,11 @@ module.exports = {
 
       for (const serviceRef of relatedServicesRef) {
         const serviceDocSnapshot = await getDoc(serviceRef);
+
         if (serviceDocSnapshot.exists()) {
-          relatedServicesData.push(serviceDocSnapshot.data());
+          const serviceData = serviceDocSnapshot.data();
+          serviceData.id = serviceRef.id;
+          relatedServicesData.push(serviceData);
         }
       }
 

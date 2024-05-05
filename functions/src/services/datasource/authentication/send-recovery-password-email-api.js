@@ -97,15 +97,28 @@ module.exports = {
         from: "pjzen@email.com", // TODO: adicionar email real
         to: email,
         subject: "Recuperação de senha",
-        text: `Clique no link a seguir para recuperar sua senha: \n ${customLink}`,
+        text: `    
+        <div style="background-color: #fff;  padding: 14px 20px; border-radius: 8px; padding: 28px; border: 1px solid #eeeeee;">
+          <h2 style="font-size: 18px; margin-bottom: 20px; color: #353535;">Recuperação de senha</h2>
+          <p style="font-size: 16px; color: #353535;">Clique no botão a seguir para recuperar sua senha:</p>
+          <a href="${customLink}" style="background-color: #ee783c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px;">Recuperar conta</a>
+        </div>
+      `,
       };
 
       // Enviar o e-mail
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          console.error("Erro ao enviar o e-mail:", error);
+          logApi(
+            apiServiceTitle,
+            "Erro ao enviar e-mail de recuperação de senha:",
+            error
+          );
         } else {
-          console.log("E-mail enviado com sucesso:", info.response);
+          logApi(
+            apiServiceTitle,
+            `E-mail de recuperação de senha enviado com sucesso: ${info.response}`
+          );
         }
       });
 

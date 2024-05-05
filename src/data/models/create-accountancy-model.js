@@ -65,4 +65,76 @@ export default {
       },
     };
   },
+
+  mounted() {
+    // TODO: comentar
+    // this.form = this.mockData();
+  },
+
+  methods: {
+    mockData() {
+      return {
+        firstName: {
+          value: "Empresa",
+          isValid: true,
+          errorMessage: "",
+          isVisited: true,
+        },
+        lastName: {
+          value: "Teste",
+          isValid: true,
+          errorMessage: "",
+          isVisited: true,
+        },
+        email: {
+          value: "renan.b.theodoro+1@gmail.com",
+          isValid: true,
+          errorMessage: "",
+          isVisited: true,
+        },
+        phone: {
+          value: "11999999999",
+          isValid: true,
+          errorMessage: "",
+          isVisited: true,
+        },
+        company: {
+          value: "Contabilidate LTDA",
+          isValid: true,
+          errorMessage: "",
+          isVisited: true,
+        },
+        cnpj: {
+          value: "84.170.408/0001-00",
+          isValid: true,
+          errorMessage: "",
+          isVisited: true,
+        },
+        clientsNumber: {
+          value: "1",
+          isValid: true,
+          errorMessage: "",
+          isVisited: true,
+        },
+        serviceType: {
+          value: "Teste 1",
+          isValid: true,
+          errorMessage: "",
+          isVisited: true,
+        },
+        password: {
+          value: "Teste@2121",
+          isValid: true,
+          errorMessage: "",
+          isVisited: true,
+        },
+        confirmPassword: {
+          value: "Teste@2121",
+          isValid: true,
+          errorMessage: "",
+          isVisited: true,
+        },
+      };
+    },
+  },
 };

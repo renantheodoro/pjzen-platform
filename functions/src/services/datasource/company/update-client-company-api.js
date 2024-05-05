@@ -3,10 +3,10 @@ const { logApi } = require("../../../data/log-api");
 const { doc, updateDoc, serverTimestamp } = require("firebase/firestore");
 const errorHandler = require("../../../data/error-handler");
 const { CLIENT_COMPANIES_COLLECTION } = require("../../../data/collections");
-const { getCleanCNPJ } = require("../../../helpers/get-clean-cnpj");
+const { getCleanDocument } = require("../../../helpers/get-clean-document");
 const validateRequest = require("../../common/validate-request");
 const { decrypt } = require("../../common/encrypt");
-const updateCompanyByCnpjApi = require("../../plug-notas-api/company/update-company-by-cnpj-api");
+const updateCompanyByDocumentApi = require("../../plug-notas-api/company/update-company-by-document-api");
 
 const apiServiceTitle = "UPDATE CLIENT COMPANY";
 
@@ -16,24 +16,28 @@ module.exports = {
     const companyUid = req.params.companyUid;
 
     const {
-      cnpj,
-      address,
-      comercialPhone,
-      tradeName,
+      isActive,
+      cpfCnpj,
       businessName,
+      tradeName,
+      cnae,
+      foundationDate,
       taxRegime,
+      companyOffering,
       municipalRegistration,
+      address,
       email,
+      phone,
     } = req.body;
 
-    let decryptedCNPJ;
+    let decryptedCpfCnpj;
     let decryptedMunicipalRegistration;
 
     if (apiKey === process.env.API_KEY_DEV) {
-      decryptedCNPJ = cnpj;
+      decryptedCpfCnpj = cpfCnpj;
       decryptedMunicipalRegistration = municipalRegistration;
     } else {
-      decryptedCNPJ = decrypt(cnpj);
+      decryptedCpfCnpj = decrypt(cpfCnpj);
       decryptedMunicipalRegistration = decrypt(municipalRegistration);
     }
     try {
@@ -54,34 +58,35 @@ module.exports = {
       );
 
       const companyData = {
-        cnpj,
-        address,
-        comercialPhone,
-        tradeName,
+        isActive,
         businessName,
+        tradeName,
+        cnae,
+        foundationDate,
         taxRegime,
-        municipalRegistration,
+        companyOffering,
+        municipalRegistration: decryptedMunicipalRegistration,
+        address,
+        phone,
         email,
         lastModifiedAt: serverTimestamp(), // Atualiza o campo de data de modificação
       };
 
       /* UPDATE COMPANY PLUG NOTAS */
-      const plugNotasResponse = await updateCompanyByCnpjApi.call({
-        cnpj: getCleanCNPJ(decryptedCNPJ),
+      const plugNotasResponse = await updateCompanyByDocumentApi.call({
+        cpfCnpj: getCleanDocument(decryptedCpfCnpj),
         address,
-        comercialPhone,
+        phone,
         tradeName,
         businessName,
         taxRegime,
-        decryptedMunicipalRegistration,
+        municipalRegistration: decryptedMunicipalRegistration,
         email,
       });
 
-      if (!plugNotasResponse.data) {
-        return res.status(plugNotasResponse.status).send(plugNotasResponse);
+      if (plugNotasResponse?.data) {
+        companyData.plugNotasCompanyData = plugNotasResponse.data;
       }
-
-      companyData.plugNotasCompanyData = plugNotasResponse.data;
 
       /* UPDATE CLIENT COMPANY FIREBASE */
       await updateDoc(clientCompanyReference, companyData);

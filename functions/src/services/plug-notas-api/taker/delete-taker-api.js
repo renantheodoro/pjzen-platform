@@ -6,10 +6,10 @@ const apiServiceTitle = "DELETE TAKER";
 module.exports = {
   async call(req, res) {
     try {
-      const cnpj = req.params.cnpj;
+      const { cpfCnpj } = req.params;
 
       const response = await axios.delete(
-        `${process.env.PLUG_NOTAS_BASE_URL_DEV}/nfse/tomador/${cnpj}`,
+        `${process.env.PLUG_NOTAS_BASE_URL_DEV}/nfse/tomador/${cpfCnpj}`,
         {
           headers: {
             "Content-Type": "application/json",

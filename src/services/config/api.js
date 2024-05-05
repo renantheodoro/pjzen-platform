@@ -14,7 +14,6 @@ export default () => {
     baseURL: baseUrl,
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
       Authorization: apiKey,
     },
   });

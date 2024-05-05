@@ -1,8 +1,6 @@
 const { plugNotasErrorApi } = require("../data/log-api");
 
 module.exports = (error, apiServiceTitle) => {
-  // console.log("-- error", error);
-
   let errorStatus = 500;
   let errorMessage = `Ocorreu um erro desconhecido ao integrar com serviço de Emissão de Notas: ${error}`;
   let errorData;

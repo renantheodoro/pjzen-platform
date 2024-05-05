@@ -1,0 +1,31 @@
+.view--create-company {
+  .view--create-company__card {
+    width: 100%;
+    padding: to-rem(60px) to-rem(80px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .view--create-company__wrapper {
+      width: 100%;
+      max-width: 90%;
+    }
+
+    .view--create-company__title {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .view--create-company__subtitle {
+      font-size: 1rem;
+      margin-bottom: to-rem(24px);
+    }
+
+    .form > p {
+      font-size: to-rem(14px);
+      color: #828282;
+      margin-bottom: to-rem(32px);
+    }
+  }
+}

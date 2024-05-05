@@ -1,5 +1,5 @@
 <template lang="">
-  <div class="view view--company-data">
+  <div class="view view--create-company">
     <Toast
       ref="toast"
       :type="toast.type"
@@ -12,18 +12,37 @@
     <div class="container">
       <div class="view__row">
         <div class="view__column view__column--content">
-          <!-- <Internal v-if="clientId" :clientId="clientId"> -->
-          <h2 class="view--company-data__title">Dados da empresa</h2>
+          <div class="view--create-company__card card">
+            <div class="view--create-company__wrapper">
+              <h3 class="view--create-company__title">
+                Cadastro de novo cliente
+              </h3>
 
-          <form class="form">
-            <div class="form__accordions">
-              <Accordion id="1" header="Informações cadastrais">
+              <form class="form">
+                <p>
+                  Preencha as informações a seguir. Seu cliente será notificado
+                  quando o registro for finalizado
+                </p>
+
+                <h3 class="view--create-company__subtitle">
+                  Informações cadastrais
+                </h3>
+
                 <div class="form__section">
                   <div class="form__row">
+                    <div class="input-field width-auto input-field--switch">
+                      <label for="">Está ativo?</label>
+                      <ToggleSwitch
+                        @onToggle="form.isActive.value = $event"
+                        :isChecked="form.isActive.value"
+                      />
+                    </div>
+
                     <div class="input-field width-auto">
                       <label for="">Tipo de Pessoa</label>
 
                       <ChooseUnity
+                        initialOption="cnpjPerson"
                         option1="cnpjPerson"
                         text1="Jurídica"
                         option2="cpfPerson"
@@ -35,26 +54,45 @@
                     <div
                       class="input-field"
                       :class="{
-                        'input-field--error': form.cnpj.isValid === false,
+                        'input-field--error': form.cpfCnpj.isValid === false,
                       }"
                     >
-                      <label for="create-client--cnpj">CNPJ</label>
-                      <input
-                        id="create-client--cnpj"
-                        type="text"
-                        placeholder=""
-                        v-model="form.cnpj.value"
-                        v-mask="masks.cnpj"
-                        @blur="
-                          visit('cnpj');
-                          validateInputs();
-                        "
-                        class="input--darkened"
-                      />
+                      <label for="create-client--cpfCnpj">{{
+                        form.entityType.value === "cnpjPerson" ? "CNPJ" : "CPF"
+                      }}</label>
+
+                      <label class="label-wrapper">
+                        <input
+                          id="create-accountancy--cpfCnpj"
+                          type="text"
+                          :placeholder="
+                            form.entityType.value === 'cnpjPerson'
+                              ? '__.___.___/___-__'
+                              : '___.___.___-__'
+                          "
+                          v-model="form.cpfCnpj.value"
+                          v-mask="
+                            form.entityType.value === 'cnpjPerson'
+                              ? masks.cnpj
+                              : masks.cpf
+                          "
+                          @keyup.enter="searchCNPJData"
+                          @blur="
+                            visit('cpfCnpj');
+                            validateInputs();
+                          "
+                        />
+                        <img
+                          v-if="form.entityType.value === 'cnpjPerson'"
+                          src="@/assets/images/icons/search.svg"
+                          class="input-field__icon"
+                          @click="searchCNPJData"
+                        />
+                      </label>
                       <span
-                        v-if="form.cnpj.isValid === false"
+                        v-if="form.cpfCnpj.isValid === false"
                         class="helper-text helper-text--error"
-                        >{{ form.cnpj.errorMessage }}</span
+                        >{{ form.cpfCnpj.errorMessage }}</span
                       >
                     </div>
                   </div>
@@ -79,7 +117,6 @@
                           visit('businessName');
                           validateInputs();
                         "
-                        class="input--darkened"
                       />
                       <span
                         v-if="form.businessName.isValid === false"
@@ -106,7 +143,6 @@
                           visit('tradeName');
                           validateInputs();
                         "
-                        class="input--darkened"
                       />
                       <span
                         v-if="form.tradeName.isValid === false"
@@ -117,50 +153,58 @@
                   </div>
 
                   <div class="form__row">
-                    <div
-                      class="input-field"
-                      :class="{
-                        'input-field--error': form.cnae.isValid === false,
-                      }"
-                    >
-                      <label for="create-client--cnae">CNAE Primário</label>
-                      <label
-                        for="create-client--cnae"
-                        class="input-field__select-area"
-                      >
-                        <select
-                          id="create-client--cnae"
-                          v-model="form.cnae.value"
-                          @blur="
-                            visit('cnae');
-                            validateInputs();
-                          "
-                          class="input-field__select-area__select input--darkened"
-                        >
-                          <option value="-1" selected>Selecione</option>
-                          <option>Teste 1</option>
-                          <option>Teste 2</option>
-                          <option>Teste 3</option>
-                          <option>Teste 4</option>
-                        </select>
-                        <img
-                          src="@/assets/images/icons/angle-down.svg"
-                          class="input-field__select-area__icon"
-                        />
-                      </label>
-
-                      <span
-                        v-if="form.cnae.isValid === false"
-                        class="helper-text helper-text--error"
-                        >{{ form.cnae.errorMessage }}</span
-                      >
-                    </div>
+                    <Autocomplete
+                      :currentData="form.cnae.value"
+                      label="CNAE primário"
+                      placeholder="Selecione"
+                      :itemList="cnaeListOptions"
+                      :hasError="form.cnae.isValid === false"
+                      :errorMessage="form.cnae.errorMessage"
+                      @updateValue="form.cnae.value = $event"
+                      @selectItem="form.cnae.value = $event"
+                      @blur="
+                        visit('cnae');
+                        validateInputs();
+                      "
+                    ></Autocomplete>
                   </div>
 
                   <div class="form__row">
+                    <!-- <div
+                      class="input-field flex-3"
+                      :class="{
+                        'input-field--error':
+                          form.foundationDate.isValid === false,
+                      }"
+                    >
+                      <label for="create-client--datepicker"
+                        >Data de fundação</label
+                      >
+                      <input
+                        id="create-client--datepicker"
+                        type="text"
+                        placeholder="Seu nome"
+                        v-model="form.foundationDate.value"
+                        @blur="
+                          visit('foundationDate');
+                          validateInputs();
+                        "
+                      />
+                      <span
+                        v-if="form.foundationDate.isValid === false"
+                        class="helper-text helper-text--error"
+                        >{{ form.foundationDate.errorMessage }}</span
+                      >
+                    </div> -->
+
                     <div class="input-field input-field--datepicker flex-1">
-                      <label for="">Data de fundação</label>
-                      <DatePicker :darkened="true" @pickedChanged="pickDate" />
+                      <label for="create-client--datepicker"
+                        >Data de fundação</label
+                      >
+                      <DatePicker
+                        :initialValue="form.foundationDate.value"
+                        @pickedChanged="pickDate"
+                      />
                     </div>
 
                     <div
@@ -183,13 +227,20 @@
                             visit('taxRegime');
                             validateInputs();
                           "
-                          class="input-field__select-area__select input--darkened"
+                          class="input-field__select-area__select"
                         >
                           <option value="-1" selected>Selecione</option>
-                          <option>Teste 1</option>
-                          <option>Teste 2</option>
-                          <option>Teste 3</option>
-                          <option>Teste 4</option>
+                          <option value="1">Simples Nacional</option>
+                          <option value="2">Fixo</option>
+                          <option value="3">Depósito em Juízo</option>
+                          <option value="4">
+                            Exigibilidade suspensa por decisão judicial
+                          </option>
+                          <option value="5">
+                            Exigibilidade suspensa por procedimento
+                            administrativo
+                          </option>
+                          <option value="6">Isenção parcial</option>
                         </select>
                         <img
                           src="@/assets/images/icons/angle-down.svg"
@@ -227,13 +278,16 @@
                             visit('companyOffering');
                             validateInputs();
                           "
-                          class="input-field__select-area__select input--darkened"
+                          class="input-field__select-area__select"
                         >
                           <option value="-1" selected>Selecione</option>
-                          <option>Teste 1</option>
-                          <option>Teste 2</option>
-                          <option>Teste 3</option>
-                          <option>Teste 4</option>
+                          <option value="Teste company offering">
+                            Teste company offering
+                          </option>
+                          <option value="Teste 1">Teste 1</option>
+                          <option value="Teste 2">Teste 2</option>
+                          <option value="Teste 3">Teste 3</option>
+                          <option value="Teste 4">Teste 4</option>
                         </select>
                         <img
                           src="@/assets/images/icons/angle-down.svg"
@@ -267,7 +321,6 @@
                           visit('municipalRegistration');
                           validateInputs();
                         "
-                        class="input--darkened"
                       />
                       <span
                         v-if="form.municipalRegistration.isValid === false"
@@ -276,10 +329,83 @@
                       >
                     </div>
                   </div>
-                </div>
-              </Accordion>
 
-              <Accordion id="2" header="Endereços e contatos">
+                  <div class="form__row">
+                    <div
+                      class="input-field"
+                      :class="{
+                        'input-field--error':
+                          form.prefectureLogin.isValid === false,
+                      }"
+                    >
+                      <label for="create-client--prefectureLogin"
+                        >E-mail de login de autenticação com a prefeitura</label
+                      >
+                      <input
+                        id="create-client--prefectureLogin"
+                        type="text"
+                        placeholder="Caso não utilize certificado digital"
+                        v-model="form.prefectureLogin.value"
+                        @blur="
+                          visit('prefectureLogin');
+                          validateInputs();
+                        "
+                      />
+                      <span
+                        v-if="form.prefectureLogin.isValid === false"
+                        class="helper-text helper-text--error"
+                        >{{ form.prefectureLogin.errorMessage }}</span
+                      >
+                    </div>
+
+                    <div
+                      class="input-field input-field--password"
+                      :class="{
+                        'input-field--error':
+                          form.prefecturePassword.isValid === false,
+                      }"
+                    >
+                      <label for="prefecturePassword"
+                        >Senha de autenticação com a prefeitura</label
+                      >
+                      <input
+                        id="prefecturePassword"
+                        :type="passwordFieldType"
+                        placeholder="Caso não utilize certificado digital"
+                        v-model="form.prefecturePassword.value"
+                        @blur="
+                          visit('prefecturePassword');
+                          validateInputs();
+                        "
+                        autocomplete="current-password"
+                      />
+                      <span
+                        v-if="form.prefecturePassword.isValid === false"
+                        class="helper-text helper-text--error"
+                        >{{ form.prefecturePassword.errorMessage }}</span
+                      >
+
+                      <a
+                        @click.prevent="togglePasswordView"
+                        class="input-field__password-button"
+                      >
+                        <img
+                          src="@/assets/images/icons/eye-password-slash.svg"
+                          v-if="passwordFieldType === 'password'"
+                        />
+                        <img
+                          src="@/assets/images/icons/eye-password.svg"
+                          v-if="passwordFieldType === 'text'"
+                        />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <h3 class="view--create-company__subtitle">
+                  Endereços e contatos
+                </h3>
+
                 <div class="form__section">
                   <div class="form__row">
                     <div
@@ -296,7 +422,6 @@
                           placeholder="Digite aqui"
                           v-model="form.zipcode.value"
                           @keyup.enter="searchAddress"
-                          @keyup="searchAddress"
                           v-mask="masks.zipCode"
                           @blur="
                             visit('zipcode');
@@ -332,7 +457,6 @@
                           visit('street');
                           validateInputs();
                         "
-                        class="input--darkened"
                       />
                       <span
                         v-if="form.street.isValid === false"
@@ -357,7 +481,6 @@
                           visit('number');
                           validateInputs();
                         "
-                        class="input--darkened"
                       />
                       <span
                         v-if="form.number.isValid === false"
@@ -383,7 +506,6 @@
                           visit('complement');
                           validateInputs();
                         "
-                        class="input--darkened"
                       />
                       <span
                         v-if="form.complement.isValid === false"
@@ -408,7 +530,6 @@
                           visit('city');
                           validateInputs();
                         "
-                        class="input--darkened"
                       />
                       <span
                         v-if="form.city.isValid === false"
@@ -435,7 +556,6 @@
                           visit('neighborhood');
                           validateInputs();
                         "
-                        class="input--darkened"
                       />
                       <span
                         v-if="form.neighborhood.isValid === false"
@@ -459,7 +579,6 @@
                           visit('uf');
                           validateInputs();
                         "
-                        class="input--darkened"
                       />
                       <span
                         v-if="form.uf.isValid === false"
@@ -469,72 +588,69 @@
                     </div>
 
                     <!-- <div
-                      class="input-field"
-                      :class="{
-                        'input-field--error':
-                          form.neighborhood.isValid === false,
-                      }"
+                  class="input-field"
+                  :class="{
+                    'input-field--error':
+                      form.neighborhood.isValid === false,
+                  }"
+                >
+                  <label for="create-client--neighborhood">Bairro</label>
+                  <label
+                    for="create-client--neighborhood"
+                    class="input-field__select-area"
+                  >
+                    <select
+                      id="create-client--neighborhood"
+                      v-model="form.neighborhood.value"
+                      @blur="
+                        visit('neighborhood');
+                        validateInputs();
+                      "
+                      class="input-field__select-area__select input--darkened"
                     >
-                      <label for="create-client--neighborhood">Bairro</label>
-                      <label
-                        for="create-client--neighborhood"
-                        class="input-field__select-area"
-                      >
-                        <select
-                          id="create-client--neighborhood"
-                          v-model="form.neighborhood.value"
-                          @blur="
-                            visit('neighborhood');
-                            validateInputs();
-                          "
-                          class="input-field__select-area__select input--darkened"
-                        >
-                          <option value="-1" selected>Selecione</option>
-                          <option>Teste 1</option>
-                          <option>Teste 2</option>
-                          <option>Teste 3</option>
-                          <option>Teste 4</option>
-                        </select>
-                        <img
-                          src="@/assets/images/icons/angle-down.svg"
-                          class="input-field__select-area__icon"
-                        />
-                      </label>
+                      <option value="-1" selected>Selecione</option>
+                      <option>Teste 1</option>
+                      <option>Teste 2</option>
+                      <option>Teste 3</option>
+                      <option>Teste 4</option>
+                    </select>
+                    <img
+                      src="@/assets/images/icons/angle-down.svg"
+                      class="input-field__select-area__icon"
+                    />
+                  </label>
 
-                      <span
-                        v-if="form.neighborhood.isValid === false"
-                        class="helper-text helper-text--error"
-                        >{{ form.neighborhood.errorMessage }}</span
-                      >
-                    </div> -->
+                  <span
+                    v-if="form.neighborhood.isValid === false"
+                    class="helper-text helper-text--error"
+                    >{{ form.neighborhood.errorMessage }}</span
+                  >
+                </div> -->
                   </div>
 
                   <div class="form__row">
                     <div
                       class="input-field"
                       :class="{
-                        'input-field--error':
-                          form.comercialPhone.isValid === false,
+                        'input-field--error': form.phone.isValid === false,
                       }"
                     >
-                      <label for="create-client--comercialPhone"
-                        >Telefone Comercial</label
-                      >
+                      <label for="create-client--phone">Telefone</label>
                       <input
-                        id="create-client--comercialPhone"
+                        id="create-client--phone"
                         type="text"
                         placeholder="Seu número"
-                        v-model="form.comercialPhone.value"
+                        v-model="form.phone.value"
                         v-mask="masks.phone"
                         @blur="
-                          visit('comercialPhone');
+                          visit('phone');
                           validateInputs();
                         "
                       />
                       <span
-                        v-if="form.comercialPhone.isValid === false"
+                        v-if="form.phone.isValid === false"
                         class="helper-text helper-text--error"
-                        >{{ form.comercialPhone.errorMessage }}</span
+                        >{{ form.phone.errorMessage }}</span
                       >
                     </div>
 
@@ -563,69 +679,98 @@
                     </div>
                   </div>
                 </div>
-              </Accordion>
-            </div>
 
-            <div class="form__footer">
-              <div class="form__footer__buttons">
-                <!-- TODO: o que o botão cancelar faz? -->
-                <button class="button button--outline">Cancelar</button>
-                <button
-                  class="button button--primary"
-                  @click.prevent="handleCreateClientCompany"
-                >
-                  <!-- :disabled="!isFormAvailable" -->
-                  Salvar
-                </button>
-              </div>
+                <div class="form__footer">
+                  <div class="form__footer__buttons">
+                    <a
+                      @click.prevent="$router.go(-1)"
+                      class="button button--outline"
+                      >Voltar</a
+                    >
+
+                    <button
+                      class="button button--primary"
+                      @click.prevent="showConfirmModal"
+                      :disabled="!isFormAvailable"
+                    >
+                      Finalizar
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
-          </form>
-          <!-- </Internal> -->
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <Modal ref="modal" :textCenter="true">
+    <div class="profile-image profile-image--center profile-image--bigger">
+      <img src="@/assets/images/profile-image-2.png" />
+    </div>
+
+    <h3 class="modal__title">Deseja confirmar o cadastro do novo cliente?</h3>
+
+    <p class="modal__text">
+      Certifique-se de que as informações preenchidas estão corretas antes de
+      clicar em “confirmar”
+    </p>
+
+    <div class="modal__footer">
+      <div class="modal__footer__buttons">
+        <button class="button button--outline" @click="closeModal">
+          Cancelar
+        </button>
+
+        <button
+          class="button button--primary"
+          @click="handleCreateClientCompany"
+        >
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </Modal>
 </template>
 <script>
 /**
  * Mixins
  * */
 import formMixin from "@/data/mixins/form-mixin.js";
-import createClientCompanyModel from "@/data/models/create-client-company-model.js";
+import companyModel from "@/data/models/company-model.js";
 
 /**
  * Services
  * */
-import createClientCompanyService from "@/services/company/create-client-company-service.js";
+import createClientCompanyService from "@/services/internal/company/create-client-company-service.js";
+import searchCNPJInfo from "@/services/common/search-cnpj-info-service.js";
+import cnaeList from "@/data/cnae-list.json";
 
 /**
  * Components
  * */
-// import Internal from "@/components/Internal.vue";
-import Accordion from "@/components/Accordion.vue";
 import ChooseUnity from "@/components/ChooseUnity.vue";
 import DatePicker from "@/components/DatePicker.vue";
 import Toast from "@/components/Toast.vue";
 import Loader from "@/components/Loader.vue";
+import Autocomplete from "@/components/Autocomplete.vue";
+import ToggleSwitch from "@/components/ToggleSwitch.vue";
+import Modal from "@/components/Modal.vue";
 
 export default {
-  name: "app-create-client-company",
+  name: "app-company-data",
 
-  mixins: [formMixin, createClientCompanyModel],
+  mixins: [formMixin, companyModel],
 
   components: {
-    // Internal,
-    Accordion,
     ChooseUnity,
     DatePicker,
     Toast,
     Loader,
-  },
-
-  computed: {
-    isFormAvailable() {
-      return this.isFormValid();
-    },
+    Autocomplete,
+    ToggleSwitch,
+    Modal,
   },
 
   data() {
@@ -637,35 +782,90 @@ export default {
         message: null,
         title: null,
       },
+
+      cnaeList: cnaeList,
+
+      passwordFieldType: "password",
     };
   },
 
-  mounted() {
-    this.clientId = this.$route.params.id;
+  computed: {
+    isFormAvailable() {
+      return this.isFormValid();
+    },
 
-    if (this.clientId) {
-      // TODO: abrir modo de edição
-    } else {
-      // TODO: abrir modo de cadastro
-    }
+    cnaeListOptions() {
+      return cnaeList.map((item) => `${item.code} | ${item.description}`);
+    },
   },
 
   methods: {
+    togglePasswordView() {
+      this[`passwordFieldType`] =
+        this[`passwordFieldType`] === "password" ? "text" : "password";
+    },
+
+    async searchCNPJData() {
+      if (!this.form.cpfCnpj.isValid) return;
+
+      this.isBusy = true;
+
+      const response = await searchCNPJInfo(this.form.cpfCnpj.value);
+
+      if (response.data.error) {
+        this.isBusy = false;
+        this.showErrorToast(
+          response.data.error ??
+            "Não foram encontrados dados para o CNPJ informado",
+          "CNPJ não encontrado"
+        );
+        return;
+      }
+
+      if (response.data) {
+        const cnpjData = response.data;
+
+        const cnpjDataInfo = {
+          cpfCnpj: this.form.cpfCnpj.value,
+          businessName: cnpjData["RAZAO SOCIAL"] ?? "",
+          tradeName: cnpjData["NOME FANTASIA"] ?? "",
+          foundationDate: cnpjData["DATA ABERTURA"] ?? "",
+          cnae:
+            `${cnpjData["CNAE PRINCIPAL CODIGO"]} | ${cnpjData["CNAE PRINCIPAL DESCRICAO"]}` ??
+            "",
+          zipcode: cnpjData["CEP"] ?? "",
+          street:
+            `${cnpjData["TIPO LOGRADOURO"]} ${cnpjData["LOGRADOURO"]}` ?? "",
+          number: cnpjData["NUMERO"] ?? "",
+          city: cnpjData["MUNICIPIO"] ?? "",
+          uf: cnpjData["UF"] ?? "",
+          neighborhood: cnpjData["BAIRRO"] ?? "",
+          complement: cnpjData["COMPLEMENTO"] ?? "",
+          phone: `${cnpjData["DDD"]} ${cnpjData["TELEFONE"]}` ?? "",
+          email: cnpjData["EMAIL"] ?? "",
+        };
+
+        this.autoCompleteForm(cnpjDataInfo);
+      }
+
+      this.isBusy = false;
+    },
+
     showSuccessToast(message) {
       this.toast = {
         type: "success",
         message: message,
-        title: "Cliente cadastrado com sucesso!",
+        title: "Cliente registrado com sucesso!",
       };
 
       this.$refs.toast.show();
     },
 
-    showErrorToast(message) {
+    showErrorToast(message, title = "Falha ao cadastrar cliente") {
       this.toast = {
         type: "error",
         message: message,
-        title: "Falha ao cadastrar cliente",
+        title,
       };
 
       this.$refs.toast.show();
@@ -673,9 +873,6 @@ export default {
 
     chooseEntity(option) {
       this.form.entityType.value = option;
-      if (this.form.entityType.value) {
-        this.form.entityType.isVisited = true;
-      }
     },
 
     pickDate(date) {
@@ -683,6 +880,14 @@ export default {
       if (this.form.foundationDate.value) {
         this.form.foundationDate.isVisited = true;
       }
+    },
+
+    showConfirmModal() {
+      this.$refs.modal.open();
+    },
+
+    closeModal() {
+      this.$refs.modal.close();
     },
 
     async searchAddress() {
@@ -694,7 +899,7 @@ export default {
 
     validateInputs() {
       this.validateField({
-        reference: this.form.cnpj,
+        reference: this.form.cpfCnpj,
         validateFunction: this.validateCNPJOrCPF,
         errorMessage: this.messages.invalidCNPJMessage,
       });
@@ -755,7 +960,7 @@ export default {
 
       this.validateField({
         reference: this.form.number,
-        validateFunction: this.validateNumberOnly,
+        validateFunction: this.validateNotEmpty,
         errorMessage: this.messages.requiredMessage,
       });
 
@@ -773,7 +978,7 @@ export default {
 
       this.validateField({
         reference: this.form.uf,
-        validateFunction: this.validateUF,
+        validateFunction: this.validateNotEmpty,
         errorMessage: this.messages.requiredMessage,
       });
 
@@ -784,7 +989,7 @@ export default {
       });
 
       this.validateField({
-        reference: this.form.comercialPhone,
+        reference: this.form.phone,
         validateFunction: this.validatePhone,
         errorMessage: this.messages.invalidPhone,
       });
@@ -792,7 +997,7 @@ export default {
 
     isFormValid() {
       if (
-        this.form.cnpj.isValid &&
+        this.form.cpfCnpj.isValid &&
         this.form.businessName.isValid &&
         this.form.tradeName.isValid &&
         this.form.cnae.isValid &&
@@ -805,7 +1010,7 @@ export default {
         this.form.city.isValid &&
         this.form.neighborhood.isValid &&
         this.form.email.isValid &&
-        this.form.comercialPhone.isValid
+        this.form.phone.isValid
       ) {
         return true;
       }
@@ -813,51 +1018,92 @@ export default {
       return false;
     },
 
+    autoCompleteForm(currentCompanyData) {
+      const formUpdated = {};
+
+      for (const key in currentCompanyData) {
+        const fieldData = currentCompanyData[key];
+        let value = fieldData;
+
+        // Trata campos aninhados
+        if (typeof fieldData === "object" && fieldData !== null) {
+          value = fieldData.value;
+        }
+
+        let isValid;
+
+        if (key === "complement") {
+          isValid = null;
+        } else if (value !== null && value !== "") {
+          isValid = true;
+        } else {
+          isValid = false;
+        }
+
+        formUpdated[key] = {
+          value: value,
+          isValid: isValid,
+          isVisited: true,
+        };
+      }
+
+      this.updateForm(formUpdated);
+    },
+
     async handleCreateClientCompany() {
       if (this.isFormValid()) {
         this.isBusy = true;
-        try {
-          const createClienteCompanyResponse = await createClientCompanyService(
-            {
-              entityType: this.form.entityType.value,
-              cnpj: this.form.cnpj.value,
-              businessName: this.form.businessName.value,
-              tradeName: this.form.tradeName.value,
-              cnae: this.form.cnae.value,
-              foundationDate: this.form.foundationDate.value,
-              taxRegime: this.form.taxRegime.value,
-              companyOffering: this.form.companyOffering.value,
-              municipalRegistration: this.form.municipalRegistration.value,
-              address: {
-                zipcode: this.form.zipcode.value,
-                street: this.form.street.value,
-                number: this.form.number.value,
-                complement: this.form.complement.value,
-                city: this.form.city.value,
-                neighborhood: this.form.neighborhood.value,
-              },
-              email: this.form.email.value,
-              comercialPhone: this.form.comercialPhone.value,
-            }
-          );
 
-          if (createClienteCompanyResponse) {
-            this.showSuccessToast("O cliente foi cadastrado com sucesso.");
+        try {
+          const updateResponse = await createClientCompanyService({
+            isActive: this.form.isActive.value,
+            entityType: this.form.entityType.value,
+            cpfCnpj: this.form.cpfCnpj.value,
+            businessName: this.form.businessName.value,
+            tradeName: this.form.tradeName.value,
+            cnae: this.form.cnae.value,
+            foundationDate: this.form.foundationDate.value,
+            taxRegime: this.form.taxRegime.value,
+            companyOffering: this.form.companyOffering.value,
+            municipalRegistration: this.form.municipalRegistration.value,
+            address: {
+              zipcode: this.form.zipcode.value,
+              street: this.form.street.value,
+              number: this.form.number.value,
+              complement: this.form.complement.value,
+              city: this.form.city.value,
+              neighborhood: this.form.neighborhood.value,
+              uf: this.form.uf.value,
+            },
+            email: this.form.email.value,
+            phone: this.form.phone.value,
+            prefectureLogin: this.form.prefectureLogin.value,
+            prefecturePassword: this.form.prefecturePassword.value,
+          });
+
+          if (updateResponse) {
+            this.showSuccessToast("O cliente foi registrado com sucesso.");
+            this.$router.push({
+              name: "clients",
+            });
+          }
+        } catch (error) {
+          let errorMessage;
+
+          if (error != null && typeof error === "string") {
+            errorMessage = error;
+          } else {
+            errorMessage =
+              "Não foi possível criar cliente. Tente novamente mais tarde.";
           }
 
-          this.isBusy = false;
-        } catch (error) {
-          this.isBusy = false;
-
-          const errorMessage = error
-            ? error
-            : "Não foi possível criar cliente. Entre em contato ou tente novamente mais tarde.";
-
           this.showErrorToast(errorMessage);
+        } finally {
+          this.closeModal();
+          this.isBusy = false;
         }
       }
     },
   },
 };
 </script>
-<style lang=""></style>

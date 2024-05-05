@@ -24,10 +24,15 @@ module.exports = {
       type,
       sellingValue,
       cnae,
-      coastValue,
+      // coastValue,
       municipalServiceCode,
       complementaryLawCode,
       operationNature,
+      serviceUF,
+      serviceCity,
+      serviceCityCode,
+      iss,
+      // inss,
     } = req.body;
 
     try {
@@ -47,10 +52,15 @@ module.exports = {
         type,
         sellingValue,
         cnae,
-        coastValue,
+        // coastValue,
         municipalServiceCode,
         complementaryLawCode,
         operationNature,
+        serviceUF,
+        serviceCity,
+        serviceCityCode,
+        iss,
+        // inss,
         lastModifiedAt: serverTimestamp(),
       };
 

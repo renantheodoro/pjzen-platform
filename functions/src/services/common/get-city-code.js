@@ -2,27 +2,24 @@ const axios = require("axios");
 
 async function getCityCode(city) {
   try {
-    const cityResponse = await axios.get(
-      `https://servicodados.ibge.gov.br/api/v1/localidades/municipios`
+    const response = await axios.get(
+      "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
     );
+    const municipios = response.data;
 
-    if (cityResponse?.data?.length) {
-      for (let i = 0; i < cityResponse.data.length; i++) {
-        if (cityResponse.data[i].nome === city) {
-          return cityResponse.data[i].id;
-        }
+    for (const municipio of municipios) {
+      if (municipio.nome.toLowerCase() === city.toLowerCase()) {
+        return municipio.id;
       }
-
-      throw "[API IBGE RESPONSE] Cidade não encontrada";
-    } else {
-      throw "[API IBGE RESPONSE] Resposta inválida do servidor";
     }
+
+    throw "[API IBGE RESPONSE] Código da cidade não encontrada.";
   } catch (error) {
-    console.error(
-      "[API IBGE RESPONSE] Ocorreu um erro ao buscar o ID da cidade:",
-      error
+    console.error();
+    throw (
+      ("[API IBGE RESPONSE] Ocorreu um erro ao buscar o código da cidade:",
+      error)
     );
-    throw error;
   }
 }
 

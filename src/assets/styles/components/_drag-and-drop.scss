@@ -76,8 +76,25 @@
     height: 100%;
 
     display: flex;
+    align-items: center;
+    justify-content: center;
 
     z-index: 2;
+
+    background-color: palette("blue", "light");
+
+    p {
+      font-size: to-rem(14px);
+      line-height: to-rem(16px);
+      color: palette("blue");
+
+      margin-bottom: 0;
+
+      img {
+        display: inline-block;
+        margin-right: 0.5rem;
+      }
+    }
   }
 
   .drag-and-drop__hover {
@@ -111,7 +128,7 @@
   }
 
   &.drag-filled {
-    height: to-rem(300px);
+    height: to-rem(130px);
   }
 
   &.drag-over {

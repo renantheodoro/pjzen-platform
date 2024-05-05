@@ -15,34 +15,29 @@ const { getCityCode } = require("../../common/get-city-code");
 module.exports = {
   async call(companyData) {
     const {
-      cnpj,
+      cpfCnpj,
       businessName,
       tradeName,
       taxRegime,
       municipalRegistration,
       address,
       email,
-      comercialPhone,
+      phone,
       certificateId,
+      prefectureLogin,
+      prefecturePassword,
     } = companyData;
 
     try {
       const cityCode = await getCityCode(address.city);
 
       const plugNotasBody = {
-        // TODO: ver onde pega esses dados
-        inscricaoEstadual: null,
-        incentivoFiscal: null,
-        incentivadorCultural: null,
         regimeTributarioEspecial: null,
 
-        cpfCnpj: cnpj,
+        cpfCnpj,
         inscricaoMunicipal: municipalRegistration,
         razaoSocial: businessName,
         nomeFantasia: tradeName,
-        certificado: certificateId,
-        simplesNacional: getTaxRegimeCode(taxRegime) === 1,
-        regimeTributario: getTaxRegimeCode(taxRegime), // 0 - Nenhum | 1 - Simples Nacional | 2 - Simples Nacional - Excesso | 3 - Regime Normal - Lucro Presumido | 4 - Normal - Lucro Real
         endereco: {
           tipoBairro: separateNeighborhoodPrefix(address.neighborhood).type,
           bairro: separateNeighborhoodPrefix(address.neighborhood).name,
@@ -57,8 +52,21 @@ module.exports = {
           descricaoCidade: address.city,
           descricaoPais: "Brasil",
         },
-        telefone: separateNumberFromDDDFromPhone(comercialPhone),
+        telefone: separateNumberFromDDDFromPhone(phone),
         email: email,
+        certificado: certificateId,
+
+        simplesNacional: getTaxRegimeCode(taxRegime) === 1,
+        regimeTributario: getTaxRegimeCode(taxRegime), // 0 - Nenhum | 1 - Simples Nacional | 2 - Simples Nacional - Excesso | 3 - Regime Normal - Lucro Presumido | 4 - Normal - Lucro Real
+
+        nfse: {
+          config: {
+            prefeitura: {
+              login: prefectureLogin ?? "",
+              senha: prefecturePassword ?? "",
+            },
+          },
+        },
       };
 
       const response = await axios.post(

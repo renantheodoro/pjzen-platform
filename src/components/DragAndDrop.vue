@@ -4,7 +4,7 @@
       ref="toast"
       type="error"
       title="Arquivo inválido"
-      text="O tipo de arquivo é inválido. Selecione um arquivo em formato PDF."
+      text="O tipo de arquivo é inválido. Selecione um arquivo em formato .PFX ou .P10."
     />
 
     <div
@@ -21,8 +21,19 @@
         style="display: none"
         @change="handleFileChange"
       />
+      <div v-if="files.length > 0" class="drag-and-drop__viewer">
+        <div v-for="(file, index) in files" :key="index">
+          <p>
+            <img
+              src="@/assets/images/icons/file-drop.svg"
+              class="drag-and-drop__instructions__icon"
+            />
+            {{ file.name }}
+          </p>
+        </div>
+      </div>
 
-      <div class="drag-and-drop__instructions">
+      <div v-else class="drag-and-drop__instructions">
         <p class="drag-and-drop__instructions__title">
           <img
             src="@/assets/images/icons/file-drop.svg"
@@ -36,19 +47,6 @@
         </p>
       </div>
 
-      <div v-if="files.length > 0" class="drag-and-drop__viewer">
-        <template v-for="(file, index) in files" :key="index">
-          <vue-pdf-app
-            style="width: 100%; height: 100%"
-            :pdf="file.blobUrl"
-            :page-scale="80"
-            :config="{
-              toolbar: false,
-            }"
-          ></vue-pdf-app>
-        </template>
-      </div>
-
       <div @dragleave="handleDragLeave" class="drag-and-drop__hover">
         <p class="drag-and-drop__hover__title">Solte o arquivo aqui</p>
       </div>
@@ -59,13 +57,16 @@
     </div>
   </div>
 </template>
+
 <script>
-import VuePdfApp from "vue3-pdf-app";
-import "vue3-pdf-app/dist/icons/main.css";
 import Toast from "@/components/Toast.vue";
 
 export default {
   name: "app-drag-and-drop",
+
+  components: {
+    Toast,
+  },
 
   props: {
     isValid: {
@@ -82,43 +83,28 @@ export default {
     return {
       files: [],
       isDragging: false,
-      numPages: 0,
     };
   },
 
   methods: {
     handleDragOver() {
-      // console.log("handleDragOver");
       this.isDragging = true;
     },
 
     handleDragEnter() {
-      // console.log("handleDragEnter");
       this.isDragging = true;
     },
 
     handleDragLeave() {
-      // console.log("handleDragLeave");
       this.isDragging = false;
     },
 
-    async handleDrop(event) {
+    handleDrop(event) {
       this.isDragging = false;
-
       const firstFile = event.dataTransfer.files[0];
-
       if (firstFile) {
-        await this.handleFiles([firstFile]);
+        this.handleFiles([firstFile]);
       }
-    },
-
-    formatSize(size) {
-      const mbSize = size / (1024 * 1024);
-      return mbSize.toFixed(2);
-    },
-
-    onNumPages(numPages) {
-      this.numPages = numPages;
     },
 
     openFilePicker() {
@@ -135,45 +121,37 @@ export default {
       this.$refs.toast.show();
     },
 
-    isPDF(file) {
-      return file && file.type === "application/pdf";
-    },
+    validateFile(file) {
+      if (!file) {
+        return false;
+      }
 
-    emitFile(file) {
-      this.$emit("onFileSelected", file.blobUrl);
-    },
-
-    getPreview(file) {
-      return URL.createObjectURL(file);
+      const validExtensions = [".PFX", ".P12"];
+      const fileName = file.name.toUpperCase();
+      return validExtensions.some((ext) => fileName.endsWith(ext));
     },
 
     saveFile(file) {
-      const blobUrl = this.getPreview(file);
-      const fileToBeSaved = {
-        name: file.name,
-        size: file.size,
-        blobUrl,
-      };
-      this.files = [];
-      this.files.push(fileToBeSaved);
-      this.emitFile(fileToBeSaved);
+      this.files = [file];
+      this.emitFile(file);
     },
 
-    async handleFiles(fileList) {
+    handleFiles(fileList) {
       for (let i = 0; i < fileList.length; i++) {
         const file = fileList[i];
-
-        if (this.isPDF(file) && this.formatSize(file.size) < 300) {
-          // arquivo deve ser menor que 300mb
+        if (this.validateFile(file)) {
           this.saveFile(file);
         } else {
           this.showErrorToast();
         }
       }
     },
-  },
 
-  components: { VuePdfApp, Toast },
+    emitFile(file) {
+      this.$emit("onFileSelected", file);
+    },
+  },
 };
 </script>
+
 <style lang=""></style>

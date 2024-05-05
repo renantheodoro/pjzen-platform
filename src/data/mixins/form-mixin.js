@@ -1,4 +1,4 @@
-import validateZipcode from "@/services/validate-cep-service.js";
+import searchCepInfoService from "@/services/common/search-cep-info-service.js";
 import { mask } from "vue-the-mask";
 
 export default {
@@ -12,7 +12,7 @@ export default {
         invalidPhone: "Telefone inválido",
         requiredSelectedMessage: "Seleciona uma opção para continuar",
         invalidCardNumber: "O número do cartão é inválido",
-        invalidCNPJMessage: "CNPJ inválido",
+        invalidCNPJMessage: "Documento inválido",
         invalidCPFMessage: "CPF inválido",
         invalidDateMessage: "Formato de data inválida",
         documentMessage: "Documento inválido",
@@ -64,7 +64,7 @@ export default {
       if (!this.validateNotEmpty(value)) {
         return false;
       }
-      return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value);
+      return /^[\w+.-]+@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value);
     },
 
     validatePassword(value) {
@@ -164,34 +164,57 @@ export default {
       return ufs.includes(uf);
     },
 
-    async validateZipcode(value) {
+    async completeZipcodeData() {
+      if (!this.form.zipcode.isValid) return;
+
       this.isBusy = true;
 
-      const response = await validateZipcode(value);
+      try {
+        const cep = this.form.zipcode.value.replace(/\D/g, ""); // Remover caracteres não numéricos do CEP
 
-      if (!response || response.error) {
-        return false;
-      }
+        if (cep.length !== 8) {
+          return {
+            error: {
+              message: "CEP inválido. Verifique os dados e tente novamente.",
+            },
+          };
+        }
 
-      if (response) {
-        this.form.zipcode.value = response.cep ?? "";
-        this.form.street.value = response.logradouro ?? "";
-        this.form.neighborhood.value = response.bairro ?? "";
-        this.form.city.value = response.localidade ?? "";
-        this.form.uf.value = response.uf ?? "";
+        const addressData = await searchCepInfoService(cep);
 
+        // Atualizar os campos de endereço com os dados retornados pela API
+        this.form.street.value = addressData.logradouro || "";
+        this.form.city.value = addressData.localidade || "";
+        this.form.neighborhood.value = addressData.bairro || "";
+        this.form.uf.value = addressData.uf || "";
+        this.form.complement.value = addressData.complemento || "";
+
+        // Atualizar validade dos campos após preenchimento automático
         this.visit("zipcode");
         this.visit("street");
         this.visit("neighborhood");
         this.visit("city");
         this.visit("uf");
 
-        this.validateInputs();
+        this.isBusy = false;
+
+        return true;
+      } catch (errorMessage) {
+        this.isBusy = false;
+        return {
+          error: {
+            message: errorMessage,
+          },
+        };
+      }
+    },
+
+    async validateZipcode(value) {
+      if (!this.validateNotEmpty(value)) {
+        return false;
       }
 
-      this.isBusy = false;
-
-      return true;
+      this.completeZipcodeData();
     },
 
     validateSelect(value) {
@@ -336,6 +359,40 @@ export default {
       return value1 === value2;
     },
 
+    validateSimplePasswords(reference1, reference2) {
+      if (
+        !this.validateField({
+          reference: reference1,
+          validateFunction: this.validateNotEmpty,
+          errorMessage: this.messages.requiredMessage,
+        })
+      ) {
+        return false;
+      }
+
+      if (
+        !this.validateField({
+          reference: reference2,
+          validateFunction: this.validateNotEmpty,
+          errorMessage: this.messages.requiredMessage,
+        })
+      ) {
+        return false;
+      }
+
+      if (reference1.isVisited && reference2.isVisited) {
+        if (this.compareEqualValues(reference1.value, reference2.value)) {
+          reference1.isValid = true;
+          reference2.isValid = true;
+        } else {
+          reference1.isValid = false;
+          reference2.isValid = false;
+          reference1.errorMessage = this.messages.differentPasswords;
+          reference2.errorMessage = this.messages.differentPasswords;
+        }
+      }
+    },
+
     validatePasswords(reference1, reference2) {
       if (
         !this.validateField({
@@ -381,6 +438,12 @@ export default {
           return false;
         }
       }
+    },
+
+    updateField(value, reference) {
+      this.form[reference].value = value;
+      this.form[reference].isVisited = true;
+      this.form[reference].isValid = value != null && value != "";
     },
   },
 };

@@ -1,5 +1,6 @@
 const functions = require("firebase-functions");
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const routes = require("./src/services/routes");
 const dotenv = require("dotenv");
@@ -9,9 +10,10 @@ const app = express();
 // Configuração do ambiente usando dotenv
 dotenv.config();
 
-// Middleware para lidar com formulários codificados em URL e JSON
+// Middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors());
 
 // Rotas
 routes(app);

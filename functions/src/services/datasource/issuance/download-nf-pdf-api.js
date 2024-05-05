@@ -15,6 +15,10 @@ module.exports = {
         throw "unauthorized";
       }
 
+      if (!nfId) {
+        throw "invalid-argument";
+      }
+
       logApi(apiServiceTitle, "Iniciando download da nota fiscal...");
 
       /* REGISTER COMPANY PLUG NOTAS */

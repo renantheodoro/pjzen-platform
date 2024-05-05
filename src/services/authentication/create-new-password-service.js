@@ -8,15 +8,15 @@ export default async (data) => {
 
     // Validações dos campos dentro do objeto form
     if (!email || typeof email !== "string") {
-      throw new Error("O valor 'email' não é válido.");
+      throw "O valor 'email' não é válido.";
     }
 
     if (!resetPasswordCode || typeof resetPasswordCode !== "string") {
-      throw new Error("O valor 'resetPasswordCode' não é válido.");
+      throw "O valor 'resetPasswordCode' não é válido.";
     }
 
     if (!newPassword || typeof newPassword !== "string") {
-      throw new Error("O valor 'newPassword' não é válido.");
+      throw "O valor 'newPassword' não é válido.";
     }
 
     const encryptedPassword = encrypt(newPassword);

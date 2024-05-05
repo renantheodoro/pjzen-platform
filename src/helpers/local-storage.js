@@ -1,10 +1,4 @@
 /**
- * userData: {
- *   emailVerified: [Boolean] // Indica se o e-mail do usuário foi verificado,
- *   uid: [String] // Identificador único do usuário,
- *   email: [String] // Endereço de e-mail do usuário,
- * },
- *
  * accountancyInfo: {
  *   uid: [String] // Identificador único do usuário,
  *   firstName: [String] // Primeiro nome do escritório contábil,
@@ -18,28 +12,14 @@
  *   phone: [String] // Número de telefone do escritório contábil,
  *   serviceType: [String] // Tipo de serviço oferecido pelo escritório contábil,
  * },
- * 
+ *
  */
 
-const USER_DATA_LOCALSTORAGE_KEY = "USER_DATA";
 const ACCOUNTANCY_DATA_LOCALSTORAGE_KEY = "ACCOUNTANCY_INFO";
+const PROFILE_DATA_LOCALSTORAGE_KEY = "PROFILE_INFO";
+const USER_SESSION_KEY = "USER_SESSION";
 
 /** GET */
-export const getUserDataFromLocalStorage = () => {
-  const storedUserData = localStorage.getItem(USER_DATA_LOCALSTORAGE_KEY);
-
-  if (
-    storedUserData !== "undefined" &&
-    storedUserData !== undefined &&
-    storedUserData !== "" &&
-    storedUserData !== null
-  ) {
-    return JSON.parse(storedUserData);
-  }
-
-  return null;
-};
-
 export const getAccountancyDataFromLocalStorage = () => {
   const storedAccountancyData = localStorage.getItem(
     ACCOUNTANCY_DATA_LOCALSTORAGE_KEY
@@ -57,11 +37,45 @@ export const getAccountancyDataFromLocalStorage = () => {
   return null;
 };
 
-/** SET */
-export const setUserDataToLocalStorage = (data) => {
-  localStorage.setItem(USER_DATA_LOCALSTORAGE_KEY, JSON.stringify(data));
+export const getProfileDataFromLocalStorage = () => {
+  const storedProfileData = localStorage.getItem(PROFILE_DATA_LOCALSTORAGE_KEY);
+
+  if (
+    storedProfileData !== "undefined" &&
+    storedProfileData !== undefined &&
+    storedProfileData !== "" &&
+    storedProfileData !== null
+  ) {
+    return JSON.parse(storedProfileData);
+  }
+
+  return null;
 };
 
+export const getUserSessionStorage = () => {
+  const storedUserSession = localStorage.getItem(USER_SESSION_KEY);
+
+  if (
+    storedUserSession !== "undefined" &&
+    storedUserSession !== undefined &&
+    storedUserSession !== "" &&
+    storedUserSession !== null
+  ) {
+    return JSON.parse(storedUserSession);
+  }
+
+  return null;
+};
+
+/** SET */
 export const setAccountancyDataToLocalStorage = (data) => {
   localStorage.setItem(ACCOUNTANCY_DATA_LOCALSTORAGE_KEY, JSON.stringify(data));
+};
+
+export const setProfileDataToLocalStorage = (data) => {
+  localStorage.setItem(PROFILE_DATA_LOCALSTORAGE_KEY, JSON.stringify(data));
+};
+
+export const setUserSessionStorage = (data) => {
+  localStorage.setItem(USER_SESSION_KEY, JSON.stringify(data));
 };

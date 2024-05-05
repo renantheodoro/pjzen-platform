@@ -7,15 +7,19 @@ import ValidateSuccess from "@/views/authentication/create/ValidateSuccess.vue";
 import RecoveryPassword from "@/views/authentication/recovery-password/RecoveryPassword.vue";
 import CreateNewPassword from "@/views/authentication/recovery-password/CreateNewPassword.vue";
 import RecoveryPasswordSuccess from "@/views/authentication/recovery-password/RecoveryPasswordSuccess.vue";
+import CreateProfileAccount from "@/views/authentication/profile/CreateProfileAccount.vue";
+import ProfileAccountSuccess from "@/views/authentication/profile/ProfileAccountSuccess.vue";
 
 // INTERNAL
-import Dashboard from "@/views/internal/Dashboard.vue";
 import ClientList from "@/views/internal/ClientList.vue";
-import ClientView from "@/components/ClientView.vue";
-import TaxInvoiceIssuance from "@/views/internal/TaxInvoiceIssuance.vue";
-import CompanyData from "@/views/internal/CreateClientCompany.vue";
+import ClientView from "@/views/internal/ClientView.vue";
+import NFInvoice from "@/views/internal/NFInvoice.vue";
+import CreateClientCompany from "@/views/internal/CreateClientCompany.vue";
+import CompanyData from "@/views/internal/CompanyData.vue";
 import DigitalCertificate from "@/views/internal/DigitalCertificate.vue";
-import RegisterService from "@/views/internal/RegisterService.vue";
+import RegisterWrapper from "@/views/internal/RegisterWrapper.vue";
+import Configuration from "@/views/internal/Configuration.vue";
+import Profiles from "@/views/internal/Profiles.vue";
 import NotFound from "@/views/internal/NotFound.vue";
 
 export default [
@@ -25,10 +29,8 @@ export default [
     name: "login",
     component: Login,
     meta: {
-      pageName: "Login",
       authGuard: false,
     },
-    props: (route) => ({ expiredSession: route.query.expiredSession }),
   },
   {
     path: "/cadastro",
@@ -43,7 +45,6 @@ export default [
         component: CreateAccountancyForm,
         name: "create-accountancy-form",
         meta: {
-          pageName: "Cadastro",
           authGuard: false,
         },
       },
@@ -52,7 +53,6 @@ export default [
         component: ValidateAccount,
         name: "validate-account",
         meta: {
-          pageName: "Validar conta",
           authGuard: false,
         },
       },
@@ -61,7 +61,6 @@ export default [
         component: ValidateSuccess,
         name: "validate-success",
         meta: {
-          pageName: "Validar conta sucesso",
           authGuard: false,
         },
       },
@@ -72,7 +71,6 @@ export default [
     name: "recovery-password",
     component: RecoveryPassword,
     meta: {
-      pageName: "Recuperar Senha",
       authGuard: false,
     },
   },
@@ -81,7 +79,6 @@ export default [
     name: "create-new-password",
     component: CreateNewPassword,
     meta: {
-      pageName: "Cadastre uma nova senha",
       authGuard: false,
     },
   },
@@ -90,7 +87,19 @@ export default [
     name: "recovery-password-success",
     component: RecoveryPasswordSuccess,
     meta: {
-      pageName: "Senha atualizada com sucesso",
+      authGuard: false,
+    },
+  },
+  {
+    path: "/criar-conta-de-colaborador",
+    name: "create-profile-account",
+    component: CreateProfileAccount,
+  },
+  {
+    path: "/perfil-criado",
+    name: "profile-account-success",
+    component: ProfileAccountSuccess,
+    meta: {
       authGuard: false,
     },
   },
@@ -98,46 +107,78 @@ export default [
   // INTERNALS
   {
     path: "/",
-    name: "dashboard",
-    component: Dashboard,
-    meta: {
-      pageName: "Dashboard",
-      authGuard: true,
-    },
+    name: "initial",
+    redirect: "/clientes",
   },
   {
-    path: "/lista-de-clientes",
-    name: "client-list",
+    path: "/clientes",
+    name: "clients",
     component: ClientList,
     meta: {
-      pageName: "Clientes",
       authGuard: true,
     },
   },
   {
-    path: "/cliente",
+    path: "/cliente/:id?",
     name: "client",
     component: ClientView,
     meta: {
-      pageName: "Visão do cliente",
       authGuard: true,
     },
   },
   {
-    path: "/emitir-nota-fiscal/:id",
-    name: "tax-invoice-issuance",
-    component: TaxInvoiceIssuance,
+    path: "/cliente/:id/servico/",
+    name: "service",
+    component: RegisterWrapper,
     meta: {
-      pageName: "Emitir Nota Fiscal",
       authGuard: true,
     },
   },
   {
-    path: "/dados-da-empresa/:id",
+    path: "/cliente/:id/tomador/",
+    name: "taker",
+    component: RegisterWrapper,
+    meta: {
+      authGuard: true,
+    },
+  },
+  {
+    path: "/cliente/:id/emitir-nota-fiscal/",
+    name: "nf-invoice",
+    component: NFInvoice,
+    meta: {
+      authGuard: true,
+    },
+  },
+  {
+    path: "/cliente/:id/consultar-nota-fiscal/:nfId",
+    name: "nf-invoice-consult",
+    component: NFInvoice,
+    meta: {
+      authGuard: true,
+    },
+  },
+  {
+    path: "/cliente/:id/duplicar-nota-fiscal/:nfId",
+    name: "nf-invoice-duplicate",
+    component: NFInvoice,
+    meta: {
+      authGuard: true,
+    },
+  },
+  {
+    path: "/dados-da-empresa/:id?",
     name: "company-data",
     component: CompanyData,
     meta: {
-      pageName: "Dados da Empresa",
+      authGuard: true,
+    },
+  },
+  {
+    path: "/cadastrar-empresa/",
+    name: "create-company",
+    component: CreateClientCompany,
+    meta: {
       authGuard: true,
     },
   },
@@ -146,17 +187,25 @@ export default [
     name: "digital-certificate",
     component: DigitalCertificate,
     meta: {
-      pageName: "Certificado Digital",
       authGuard: true,
     },
   },
   {
-    path: "/cadastrar-servico/:id",
-    name: "create-service",
-    component: RegisterService,
+    path: "/configuracoes",
+    name: "configuration",
+    component: Configuration,
     meta: {
-      pageName: "Cadastrar Serviço",
       authGuard: true,
+      adminGuard: true,
+    },
+  },
+  {
+    path: "/configuracoes/perfis",
+    name: "profiles",
+    component: Profiles,
+    meta: {
+      authGuard: true,
+      adminGuard: true,
     },
   },
 

@@ -66,6 +66,41 @@
     }
   }
 
+  &.button--link {
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: palette("primary");
+
+    transition: ease 0.3s;
+
+    &:hover {
+      border-color: palette("primary");
+    }
+  }
+
+  &.button--icon {
+    border: none;
+    background-color: transparent;
+    color: palette("primary");
+
+    transition: ease 0.3s;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    padding: 8px 0;
+
+    .button__icon {
+      margin-left: 8px;
+      display: inline-block;
+    }
+
+    &:hover {
+      // text-decoration: underline;
+    }
+  }
+
   &.button--orange {
     background-color: palette("button", "orange");
     color: palette("white");

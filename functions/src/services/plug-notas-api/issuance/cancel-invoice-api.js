@@ -24,8 +24,6 @@ module.exports = {
         }
       );
 
-      console.log("response", response);
-
       if (response?.data) {
         // res.status(response.status).send({
         //   status: response.status,

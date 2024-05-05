@@ -46,10 +46,18 @@
   &.modal--center {
     text-align: center;
 
+    .form {
+      text-align: left;
+    }
+
     .modal__title,
     .modal__text {
       text-align: center;
     }
+  }
+
+  &.modal--form {
+    height: to-rem(560px);
   }
 
   .modal__title {
@@ -82,26 +90,38 @@
     }
   }
 
-  // .modal__close-button {
-  //   position: absolute;
-  //   z-index: 2;
+  &.modal--popup {
+    height: auto;
 
-  //   top: -30px;
-  //   right: -30px;
+    padding: 0;
+  }
 
-  //   svg path {
-  //     fill: white;
-  //   }
+  .modal__popup {
+    .modal__popup__header {
+      padding: 1rem 1.75rem 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-  //   @media screen and (min-width: breakpoint("desktop")) {
-  //     &.modal__close-button--inside {
-  //       top: 30px;
-  //       right: 30px;
+      border-bottom: 1px solid #eeeeee;
 
-  //       svg path {
-  //         fill: black;
-  //       }
-  //     }
-  //   }
-  // }
+      margin-bottom: 1rem;
+    }
+
+    .modal__popup__content {
+      padding: 0.5rem 1.75rem;
+    }
+
+    .modal__popup__footer {
+      padding: 0 0.5rem 1rem;
+
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      .button {
+        width: 128px;
+      }
+    }
+  }
 }

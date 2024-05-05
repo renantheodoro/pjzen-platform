@@ -12,7 +12,7 @@ const {
   CLIENT_COMPANIES_COLLECTION,
   CLIENT_TAKER_COLLECTION,
 } = require("../../../data/collections");
-const { getCleanCNPJ } = require("../../../helpers/get-clean-cnpj");
+const { getCleanDocument } = require("../../../helpers/get-clean-document");
 const validateRequest = require("../../common/validate-request");
 const { decrypt } = require("../../common/encrypt");
 const registerTakerService = require("../../plug-notas-api/taker/register-taker-api");
@@ -25,7 +25,7 @@ module.exports = {
 
     let {
       companyUid,
-      cnpj,
+      cpfCnpj,
       businessName,
       municipalRegistration,
       address,
@@ -33,15 +33,17 @@ module.exports = {
       email,
     } = req.body;
 
-    let decryptedCNPJ;
+    let decryptedCpfCnpj;
     let decryptedMunicipalRegistration;
 
     if (apiKey === process.env.API_KEY_DEV) {
-      decryptedCNPJ = cnpj;
+      decryptedCpfCnpj = cpfCnpj;
       decryptedMunicipalRegistration = municipalRegistration;
     } else {
-      decryptedCNPJ = decrypt(cnpj);
-      decryptedMunicipalRegistration = decrypt(municipalRegistration);
+      decryptedCpfCnpj = decrypt(cpfCnpj);
+      decryptedMunicipalRegistration = municipalRegistration
+        ? decrypt(municipalRegistration)
+        : null;
     }
 
     try {
@@ -56,9 +58,9 @@ module.exports = {
       logApi(apiServiceTitle, "Iniciando cadastro de tomador...");
 
       const takerData = {
-        cnpj: getCleanCNPJ(decryptedCNPJ),
+        cpfCnpj: getCleanDocument(decryptedCpfCnpj),
         businessName,
-        municipalRegistration: decryptedMunicipalRegistration,
+        municipalRegistration: decryptedMunicipalRegistration ?? null,
         address: {
           zipcode: address.zipcode,
           street: address.street,
@@ -94,14 +96,18 @@ module.exports = {
       takerData.companyReference = companyReference;
 
       await setDoc(
-        doc(config.db, CLIENT_TAKER_COLLECTION, getCleanCNPJ(decryptedCNPJ)),
+        doc(
+          config.db,
+          CLIENT_TAKER_COLLECTION,
+          getCleanDocument(decryptedCpfCnpj)
+        ),
         takerData
       );
 
       const clientTakerReference = doc(
         config.db,
         CLIENT_TAKER_COLLECTION,
-        getCleanCNPJ(decryptedCNPJ)
+        getCleanDocument(decryptedCpfCnpj)
       );
 
       await updateDoc(companyReference, {
@@ -111,7 +117,7 @@ module.exports = {
       const clientTakerData = {
         companyUid: companyUid,
         takerId: clientTakerReference.id,
-        takerCNPJ: decryptedCNPJ,
+        takerCpfCnpj: decryptedCpfCnpj,
         takerData,
       };
 

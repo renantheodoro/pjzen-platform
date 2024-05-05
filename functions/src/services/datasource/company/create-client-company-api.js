@@ -12,10 +12,10 @@ const {
   CLIENT_COMPANIES_COLLECTION,
   ACCOUNTANCIES_COLLECTION,
 } = require("../../../data/collections");
-const { getCleanCNPJ } = require("../../../helpers/get-clean-cnpj");
+const { getCleanDocument } = require("../../../helpers/get-clean-document");
 const validateRequest = require("../../common/validate-request");
 const { decrypt } = require("../../common/encrypt");
-const registerCompanyService = require("../../plug-notas-api/company/register-company-api");
+// const registerCompanyService = require("../../plug-notas-api/company/register-company-api");
 
 const apiServiceTitle = "CREATE CLIENT COMPANY";
 
@@ -26,7 +26,8 @@ module.exports = {
     let {
       accountancyUid,
       entityType,
-      cnpj,
+      isActive,
+      cpfCnpj,
       businessName,
       tradeName,
       cnae,
@@ -36,18 +37,19 @@ module.exports = {
       municipalRegistration,
       address,
       email,
-      comercialPhone,
-      certificateId,
+      phone,
+      prefectureLogin,
+      prefecturePassword,
     } = req.body;
 
-    let decryptedCNPJ;
+    let decryptedCpfCnpj;
     let decryptedMunicipalRegistration;
 
     if (apiKey === process.env.API_KEY_DEV) {
-      decryptedCNPJ = cnpj;
+      decryptedCpfCnpj = cpfCnpj;
       decryptedMunicipalRegistration = municipalRegistration;
     } else {
-      decryptedCNPJ = decrypt(cnpj);
+      decryptedCpfCnpj = decrypt(cpfCnpj);
       decryptedMunicipalRegistration = decrypt(municipalRegistration);
     }
 
@@ -64,7 +66,8 @@ module.exports = {
 
       const companyData = {
         entityType,
-        cnpj: getCleanCNPJ(decryptedCNPJ),
+        isActive,
+        cpfCnpj: getCleanDocument(decryptedCpfCnpj),
         businessName,
         tradeName,
         cnae,
@@ -72,7 +75,6 @@ module.exports = {
         taxRegime,
         companyOffering,
         municipalRegistration: decryptedMunicipalRegistration,
-        certificateId,
         address: {
           zipcode: address.zipcode,
           street: address.street,
@@ -83,26 +85,18 @@ module.exports = {
           uf: address.uf,
         },
         email,
-        comercialPhone,
+        phone,
+        prefectureLogin,
+        prefecturePassword,
         createdAt: serverTimestamp(),
         lastModifiedAt: serverTimestamp(),
-        isActive: true,
       };
-
-      /* REGISTER COMPANY PLUG NOTAS */
-      const plugNotasResponse = await registerCompanyService.call(companyData);
 
       const accountancyReference = doc(
         config.db,
         ACCOUNTANCIES_COLLECTION,
         accountancyUid
       );
-
-      if (!plugNotasResponse.data) {
-        return res.status(plugNotasResponse.status).send(plugNotasResponse);
-      }
-
-      companyData.plugNotasCompanyData = plugNotasResponse.data;
 
       /* CREATE CLIENT COMPANY FIREBASE */
       companyData.accountancyReference = accountancyReference;
@@ -111,7 +105,7 @@ module.exports = {
         doc(
           config.db,
           CLIENT_COMPANIES_COLLECTION,
-          getCleanCNPJ(decryptedCNPJ)
+          getCleanDocument(decryptedCpfCnpj)
         ),
         companyData
       );
@@ -119,7 +113,7 @@ module.exports = {
       const clientCompanyReference = doc(
         config.db,
         CLIENT_COMPANIES_COLLECTION,
-        getCleanCNPJ(decryptedCNPJ)
+        getCleanDocument(decryptedCpfCnpj)
       );
 
       await updateDoc(accountancyReference, {
@@ -138,7 +132,6 @@ module.exports = {
         status: 200,
         message: successMessage,
         data: clientCompanyData,
-        plugNotasData: plugNotasResponse,
       });
     } catch (error) {
       const errorResponse = errorHandler(error, apiServiceTitle);

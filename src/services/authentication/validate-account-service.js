@@ -7,11 +7,11 @@ const validateAccountService = async (data) => {
 
     // Validações dos campos dentro do objeto form
     if (!documentId || typeof documentId !== "string") {
-      throw new Error("O valor 'documentId' não é válido.");
+      throw "O valor 'documentId' não é válido.";
     }
 
     if (!validationCode || isNaN(Number(validationCode))) {
-      throw new Error("O valor 'validationCode' não é válido.");
+      throw "O valor 'validationCode' não é válido.";
     }
 
     await api().post("validate-account", {

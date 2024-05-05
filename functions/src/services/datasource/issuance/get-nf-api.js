@@ -25,10 +25,6 @@ module.exports = {
     const { nfId } = req.params;
 
     try {
-      if (!validateRequest(apiKey)) {
-        throw "unauthorized";
-      }
-
       logApi(
         apiServiceTitle,
         `Iniciando busca pela nota fiscal com id: ${nfId}`
@@ -56,6 +52,16 @@ module.exports = {
 
       if (nfSnapshot.exists()) {
         const nfData = nfSnapshot.data();
+
+        const serviceRefPath = nfData.serviceReference;
+        const takerRefPath = nfData.takerReference;
+
+        // Extrair IDs de serviceReference e takerReference
+        const serviceRefId = serviceRefPath.split("/").pop();
+        const takerRefId = takerRefPath.split("/").pop();
+
+        nfData.service.id = serviceRefId;
+        nfData.taker.id = takerRefId;
 
         const successMessage = "Busca pela nota fiscal realizada com sucesso!";
         logApi(apiServiceTitle, successMessage);

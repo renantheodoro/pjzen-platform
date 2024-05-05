@@ -6,11 +6,11 @@ const sendValidationCodeService = async (data) => {
     const { documentId, email } = data;
 
     if (!documentId || typeof documentId !== "string") {
-      throw new Error("O valor 'documentId' não é válido.");
+      throw "O valor 'documentId' não é válido.";
     }
 
     if (!email || typeof email !== "string") {
-      throw new Error("O valor 'email' não é válido.");
+      throw "O valor 'email' não é válido.";
     }
 
     await api().post("send-validation-code", { documentId, email });

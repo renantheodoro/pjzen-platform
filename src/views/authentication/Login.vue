@@ -79,11 +79,11 @@
               class="input-field__password-button"
             >
               <img
-                src="@/assets/images/icons/eye-password.svg"
+                src="@/assets/images/icons/eye-password-slash.svg"
                 v-if="passwordFieldType === 'password'"
               />
               <img
-                src="@/assets/images/icons/eye-password-slash.svg"
+                src="@/assets/images/icons/eye-password.svg"
                 v-if="passwordFieldType === 'text'"
               />
             </a>
@@ -202,7 +202,7 @@ export default {
       this.toast = {
         type: "error",
         message: message,
-        title: "Falha ao recuperar senha",
+        title: "Falha ao realizar login",
       };
       this.$refs.toast.show();
     },
@@ -226,7 +226,7 @@ export default {
             password: this.form.password.value,
           });
 
-          this.$router.push({ name: "dashboard" });
+          this.$router.push({ name: "initial" });
 
           this.isBusy = false;
         } catch (error) {

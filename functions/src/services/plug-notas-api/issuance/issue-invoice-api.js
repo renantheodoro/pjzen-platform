@@ -58,21 +58,54 @@ const { getCityCode } = require("../../common/get-city-code");
 
 const apiServiceTitle = "ISSUE INVOICE";
 
+function convertStringToFloat(string) {
+  // Remove o símbolo de moeda e substitui vírgula por ponto
+  const numeroString = string.replace(/[^\d,]/g, "").replace(",", ".");
+  // Converte a string para um número float
+  const numeroFloat = parseFloat(numeroString);
+  return numeroFloat;
+}
+
+function convertDateToDateTime(dataString) {
+  // Dividir a string em dia, mês e ano
+  let partes = dataString.split("/");
+
+  // Criar um objeto Date com ano, mês e dia
+  let data = new Date(partes[2], partes[1] - 1, partes[0]);
+
+  // Obter a representação de data e hora ISO 8601
+  let dateTimeString = data.toISOString();
+
+  return dateTimeString;
+}
+
 module.exports = {
   async call(nfData) {
-    const { providerCnpj, integrationId, taker, service } = nfData;
+    const {
+      companyUid,
+      taker,
+      service,
+      quantity,
+      total,
+      totalWithDiscounts,
+      rps,
+      rpsSerie,
+      rpsDate,
+      rpsDueDate,
+      iss,
+      operationNature,
+    } = nfData;
 
     try {
       const cityCode = await getCityCode(taker.address.city);
 
       const nfRequestData = [
         {
-          idIntegracao: integrationId,
           prestador: {
-            cpfCnpj: providerCnpj,
+            cpfCnpj: companyUid,
           },
           tomador: {
-            cpfCnpj: taker.cnpj,
+            cpfCnpj: taker.cpfCnpj,
             razaoSocial: taker.businessName,
             inscricaoMunicipal: taker.municipalRegistration,
             email: taker.email,
@@ -96,21 +129,26 @@ module.exports = {
           servico: [
             {
               codigo: service.internalCode,
-              codigoTributacao: "14.10", // TODO: adicionar o valor real
               discriminacao: service.serviceName,
-              cnae: service.cnae,
+              cnae: service.cnae.code,
+              quantidade: quantity,
               iss: {
-                tipoTributacao: 7, // TODO: adicionar o valor real
-                exigibilidade: 1, // TODO: adicionar o valor real
-                aliquota: 3, // TODO: adicionar o valor real
+                aliquota: iss.value,
               },
               valor: {
-                servico: 1, // TODO: adicionar o valor real
-                descontoCondicionado: 0, // TODO: adicionar o valor real
-                descontoIncondicionado: 0, // TODO: adicionar o valor real
+                servico: convertStringToFloat(total),
+                baseCalculo: convertStringToFloat(totalWithDiscounts),
               },
+              responsavelRetencao: iss.responsible === "my-client" ? "2" : "1",
             },
           ],
+          naturezaTributacao: parseFloat(operationNature),
+          rps: {
+            serie: rpsSerie,
+            dataEmissao: convertDateToDateTime(rpsDate),
+            dataVencimento: convertDateToDateTime(rpsDueDate),
+            numero: parseFloat(rps),
+          },
         },
       ];
 

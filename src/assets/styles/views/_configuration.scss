@@ -1,0 +1,76 @@
+.view--configuration {
+  .view--configuration__header {
+    margin-bottom: 2rem;
+
+    h1 {
+      color: #4b4b4b;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      margin-bottom: 5px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      a {
+        display: inline-block;
+        margin-right: 6px;
+        color: palette("blue");
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+      }
+
+      span {
+        margin-right: 6px;
+        img {
+          display: block;
+        }
+      }
+    }
+  }
+
+  .view--configuration__content {
+    .view--configuration__content__card-links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      a {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        width: 174px;
+        height: 137px;
+        border-radius: 4px;
+        background: #ecf3ff;
+
+        padding: 23px 18px;
+
+        margin-right: 40px;
+
+        img {
+          display: block;
+          margin-bottom: 34px;
+        }
+
+        span {
+          color: #686868;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        }
+      }
+    }
+
+    .view--configuration__content__profiles {
+    }
+  }
+}

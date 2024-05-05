@@ -1,0 +1,47 @@
+
+
+.switch {
+  display: inline-block;
+}
+
+.switch input {
+  display: none;
+}
+
+.switch label {
+  display: block;
+  width: 40px;
+  height: 25px;
+  padding: 3px;
+  border-radius: 15px;
+  background: transparent;
+  border: 2px solid palette("blue");
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.switch label::after {
+  content: "";
+  display: inherit;
+  width: 15px;
+  height: 15px;
+  border-radius: 12px;
+  background: palette("blue");
+  transition: 0.3s;
+  translate: 0;
+}
+
+.switch input:checked ~ label {
+  border-color: transparent;
+  background-color: palette("purple", "light");
+}
+
+.switch input:checked ~ label::after {
+  translate: 14px 0;
+}
+
+.switch input:disabled ~ label {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

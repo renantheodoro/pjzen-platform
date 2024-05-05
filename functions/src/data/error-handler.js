@@ -66,14 +66,28 @@ module.exports = (error, apiServiceTitle) => {
       errorStatus = 403; // Forbidden
       break;
     case "auth/user-not-found":
+    case "not-found":
+    case "error/profile-not-found":
+      errorText = "Documento do perfil não encontrado para ser atualizado";
+      errorStatus = 404; // Not Found
+      break;
     case "error/not-found":
       errorText =
         "Usuário ou documento não encontrado. Verifique as credenciais";
       errorStatus = 404; // Not Found
       break;
+    case "profile/email-already-exists":
+      errorText =
+        "Um convite já foi enviado para o usuário ou este já possui conta";
+      errorStatus = 409; // Conflict
+      break;
     case "auth/email-already-exists":
     case "auth/email-already-in-use":
       errorText = "Usuário já existe. Não é possível criar uma nova conta";
+      errorStatus = 409; // Conflict
+      break;
+    case "company-already-has-active-certificate":
+      errorText = "Empresa já tem um certificado ativo.";
       errorStatus = 409; // Conflict
       break;
     case "auth/too-many-requests":

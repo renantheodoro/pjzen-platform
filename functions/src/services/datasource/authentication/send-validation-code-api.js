@@ -76,14 +76,26 @@ module.exports = {
         from: "pjzen@email.com",
         to: email,
         subject: "Código de Verificação",
-        text: `Seu código de verificação é: ${validationCode}`,
+        text: `
+        <div style="background-color: #fff;  padding: 14px 20px; border-radius: 8px; padding: 28px; border: 1px solid #eeeeee;">
+          <h2 style="font-size: 18px; margin-bottom: 20px; color: #353535;">Código de Verificação</h2>
+          <p style="font-size: 16px; color: #353535;">Seu código de verificação é: <strong>${validationCode}</strong></p>
+        </div>
+        `,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          console.error("Erro ao enviar o e-mail:", error);
+          logApi(
+            apiServiceTitle,
+            "Erro ao enviar código de validação por e-mail:",
+            error
+          );
         } else {
-          console.log("E-mail enviado com sucesso:", info.response);
+          logApi(
+            apiServiceTitle,
+            `Código de validação enviado para o e-mail com sucesso: ${info.response}`
+          );
         }
       });
 

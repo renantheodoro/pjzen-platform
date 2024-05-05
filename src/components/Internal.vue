@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="view__row">
-      <ViewSidebar v-if="currentClient" :currentClient="currentClient" />
+      <ViewSidebar ref="sidebar" v-if="clientId" :clientId="clientId" />
 
       <div class="view__column view__column--content">
         <slot />
@@ -10,11 +10,6 @@
   </div>
 </template>
 <script>
-/**
- * Services
- * */
-import getClientByIdService from "@/services/company/get-client-by-id-service.js";
-
 /**
  * Components
  * */
@@ -30,41 +25,13 @@ export default {
     },
   },
 
-  data() {
-    return {
-      isBusy: false,
-      currentClient: null,
-    };
-  },
-
   components: {
     ViewSidebar,
   },
 
-  mounted() {
-    this.handleGetClient();
-  },
-
   methods: {
-    async handleGetClient() {
-      this.isBusy = true;
-
-      try {
-        const currentClient = await getClientByIdService(this.clientId);
-
-        if (currentClient) {
-          this.currentClient = currentClient;
-        }
-      } catch (error) {
-        this.isBusy = false;
-        const errorMessage = error
-          ? error
-          : "Não foi possível buscar o cliente.";
-
-        console.error(errorMessage);
-      } finally {
-        this.isBusy = false;
-      }
+    updateClient() {
+      this.$refs.sidebar.handleGetClient();
     },
   },
 };

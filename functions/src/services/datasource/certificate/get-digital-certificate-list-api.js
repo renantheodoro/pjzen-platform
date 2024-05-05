@@ -15,24 +15,25 @@ module.exports = {
       throw "unauthorized";
     }
 
-    const { clientUid } = req.query;
+    const { companyUid } = req.query;
 
     try {
-      if (!clientUid) {
+      if (!companyUid) {
         throw "invalid-argument";
       }
 
       logApi(apiServiceTitle, "Iniciando busca por certificados digitais...");
 
       const collectionRef = collection(config.db, CLIENT_COMPANIES_COLLECTION);
-      const documentRef = doc(collectionRef, clientUid);
-      const documentSnapshot = await getDoc(documentRef);
+      const companyRef = doc(collectionRef, companyUid);
+      const companySnapshot = await getDoc(companyRef);
 
       let digitalCertificatesData = [];
 
-      if (documentSnapshot.exists()) {
-        const relatedDigitalCertificatesRefs =
-          documentSnapshot.data()?.relatedCertificates;
+      if (companySnapshot.exists()) {
+        const companyData = companySnapshot.data();
+
+        const relatedDigitalCertificatesRefs = companyData?.relatedCertificates;
 
         if (relatedDigitalCertificatesRefs?.length > 0) {
           const digitalCertificatesPromises =
@@ -40,7 +41,8 @@ module.exports = {
               const certificateSnapshot = await getDoc(certificateRef);
 
               if (certificateSnapshot.exists()) {
-                return certificateSnapshot.data();
+                const certificateData = certificateSnapshot.data();
+                return { id: certificateSnapshot.id, ...certificateData }; // Adiciona o .id ao objeto retornado
               }
 
               return null;
@@ -53,18 +55,23 @@ module.exports = {
           digitalCertificatesData = clientCompaniesSnapshots.filter(
             (data) => data !== null
           );
+
+          // Ordenar digitalCertificatesData por data de vencimento mais recente
+          digitalCertificatesData.sort((a, b) => {
+            const dateA = new Date(a.plugNotasCertificateData.vencimento);
+            const dateB = new Date(b.plugNotasCertificateData.vencimento);
+            return dateB - dateA;
+          });
         }
       }
 
       const clientCompanyData = {
-        uid: clientUid,
+        uid: companyUid,
         digitalCertificatesData,
       };
 
       const successMessage = "Busca de certificados realizada com sucesso!";
       logApi(apiServiceTitle, successMessage);
-
-      console.log("successMessage", successMessage);
 
       res.status(200).send({
         status: 200,

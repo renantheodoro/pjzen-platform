@@ -25,11 +25,12 @@ export default {
     text1: String,
     option2: String,
     text2: String,
+    initialOption: String,
   },
 
   data() {
     return {
-      optionSelected: this.option1,
+      optionSelected: this.initialOption,
     };
   },
 

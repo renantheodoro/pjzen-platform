@@ -4,7 +4,6 @@ const { doc, getDoc, collection } = require("firebase/firestore");
 const errorHandler = require("../../../data/error-handler");
 const { CLIENT_COMPANIES_COLLECTION } = require("../../../data/collections");
 const validateRequest = require("../../common/validate-request");
-
 const apiServiceTitle = "GET CLIENT COMPANY BY ID SERVICE";
 
 module.exports = {
@@ -15,7 +14,7 @@ module.exports = {
       throw "unauthorized";
     }
 
-    const { companyUid } = req.body;
+    const { companyUid } = req.query;
 
     try {
       if (!companyUid) {
@@ -31,6 +30,7 @@ module.exports = {
         collection(config.db, CLIENT_COMPANIES_COLLECTION),
         companyUid
       );
+
       const clientCompanySnapshot = await getDoc(clientCompanyRef);
 
       if (clientCompanySnapshot.exists()) {

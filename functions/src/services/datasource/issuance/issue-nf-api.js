@@ -18,9 +18,7 @@ const {
   PLUG_NOTAS_STATUS_CONCLUIDO,
   NF_STATUS_COMPLETED,
 } = require("../../../data/nf-status");
-const { getCleanCNPJ } = require("../../../helpers/get-clean-cnpj");
 const validateRequest = require("../../common/validate-request");
-const { decrypt } = require("../../common/encrypt");
 const issueInvoiceApi = require("../../plug-notas-api/issuance/issue-invoice-api");
 const getInvoiceByNfIdApi = require("../../plug-notas-api/issuance/get-invoice-by-nf-id-api");
 
@@ -32,19 +30,27 @@ module.exports = {
 
     let {
       companyUid,
-      integrationId,
-      providerCnpj,
       takerReference,
       serviceReference,
+      sellingValue,
+      sellingDate,
+      // category,
+      // itemDetails,
+      quantity,
+      unityValue,
+      total,
+      totalWithDiscounts,
+      // discount,
+      operationNature,
+      observations,
+      // description,
+      rps,
+      rpsSerie,
+      rpsDate,
+      rpsDueDate,
+      iss,
+      importMethod,
     } = req.body;
-
-    let decryptedCNPJ;
-
-    if (apiKey === process.env.API_KEY_DEV) {
-      decryptedCNPJ = providerCnpj;
-    } else {
-      decryptedCNPJ = decrypt(providerCnpj);
-    }
 
     try {
       if (!validateRequest(apiKey)) {
@@ -78,10 +84,27 @@ module.exports = {
       }
 
       const issueNfData = {
-        providerCnpj: getCleanCNPJ(decryptedCNPJ),
-        integrationId,
+        companyUid,
         taker: takerData,
         service: serviceData,
+        sellingValue,
+        sellingDate,
+        // category,
+        // itemDetails,
+        quantity,
+        unityValue,
+        total,
+        totalWithDiscounts,
+        // discount,
+        operationNature,
+        observations,
+        // description,
+        rps,
+        rpsSerie,
+        rpsDate,
+        rpsDueDate,
+        iss,
+        importMethod,
         createdAt: serverTimestamp(),
         lastModifiedAt: serverTimestamp(),
         status: NF_STATUS_AWAITING_RETURN,
@@ -130,8 +153,11 @@ module.exports = {
         relatedNFs: arrayUnion(nfReference),
       });
 
+      await updateDoc(takerDocRef, {
+        relatedNFs: arrayUnion(nfReference),
+      });
+
       const nfData = {
-        integrationId,
         nfId,
         issueNfData,
         companyUid,

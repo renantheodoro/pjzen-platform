@@ -28,6 +28,7 @@
   }
 
   .accordion__content {
+    overflow: hidden;
     padding: 0 to-rem(26px);
 
     opacity: 0;

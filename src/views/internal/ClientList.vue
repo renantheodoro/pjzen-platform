@@ -6,6 +6,8 @@
     :text="toast.message"
   />
 
+  <SidebarClientFilter ref="sidebarClientFilter" @applyFilter="applyFilter" />
+
   <Loader v-if="isBusy" />
 
   <div class="view view--client-list">
@@ -16,24 +18,25 @@
         </div>
 
         <router-link
-          :to="{ name: 'company-data' }"
+          :to="{ name: 'create-company' }"
           class="button button--primary"
         >
           Adicionar cliente
           <img src="@/assets/images/icons/plus.svg" class="button__icon" />
         </router-link>
 
-        <button class="button button--transparent">
+        <!-- <button class="button button--transparent">
           Importar clientes
           <img src="@/assets/images/icons/download.svg" class="button__icon" />
-        </button>
+        </button> -->
       </div>
 
-      <Table
+      <TableClient
         title="Lista de clientes"
-        tableType="CLIENT"
         :content="tableContent"
         @onOpenProfile="openClient"
+        @onEditProfile="editClient"
+        @onFilterClick="openSidebarFilterClient"
       />
     </div>
   </div>
@@ -42,22 +45,24 @@
 /**
  * Services
  * */
-import getClientCompanyListService from "@/services/company/get-client-company-list-service.js";
+import getClientCompanyListService from "@/services/internal/company/get-client-company-list-service.js";
 
 /**
  * Components
  * */
-import Table from "@/components/Table.vue";
+import TableClient from "@/components/TableClient.vue";
 import Toast from "@/components/Toast.vue";
 import Loader from "@/components/Loader.vue";
+import SidebarClientFilter from "@/components/SidebarClientFilter.vue";
 
 export default {
   name: "app-client-list",
 
   components: {
-    Table,
+    TableClient,
     Toast,
     Loader,
+    SidebarClientFilter,
   },
 
   data() {
@@ -72,61 +77,14 @@ export default {
 
       tableContent: {
         head: [
-          "Nome",
-          "Licença utilizada",
+          "Razão social",
+          // "Licença utilizada",
           "Status",
           "Última exportação",
           "Vencimento",
         ],
 
-        body: [
-          // [
-          //   {
-          //     type: "checkbox",
-          //     content: "Carla Brico da Rocha Guimarães Serviços Médicos",
-          //   },
-          //   {
-          //     type: "text",
-          //     content: "Pacote Contador",
-          //   },
-          //   {
-          //     type: "status",
-          //     status: "inactive",
-          //     content: "Desativado",
-          //   },
-          //   {
-          //     type: "text",
-          //     content: "17/06/2023",
-          //   },
-          //   {
-          //     type: "text",
-          //     content: "31/06/2023",
-          //   },
-          // ],
-          // [
-          //   {
-          //     type: "checkbox",
-          //     content: "Carla Brico da Rocha Guimarães Serviços Médicos",
-          //   },
-          //   {
-          //     type: "text",
-          //     content: "Pacote Contador",
-          //   },
-          //   {
-          //     type: "status",
-          //     status: "active",
-          //     content: "Ativo",
-          //   },
-          //   {
-          //     type: "text",
-          //     content: "17/06/2023",
-          //   },
-          //   {
-          //     type: "text",
-          //     content: "31/06/2023",
-          //   },
-          // ],
-        ],
+        body: [],
       },
 
       clientFullDataList: [],
@@ -134,6 +92,34 @@ export default {
   },
 
   methods: {
+    applyFilter(filter) {
+      let filteredClientList = this.clientFullDataList;
+
+      if (filter.searchForActive && !filter.searchForInactive) {
+        // Filtrar apenas os clientes ativos
+        filteredClientList = filteredClientList.filter(
+          (item) => item.isActive === true
+        );
+      } else if (!filter.searchForActive && filter.searchForInactive) {
+        // Filtrar apenas os clientes inativos
+        filteredClientList = filteredClientList.filter(
+          (item) => item.isActive === false
+        );
+      }
+
+      // Se ambos os filtros estiverem ativados, não é necessário filtrar,
+      // pois queremos mostrar tanto os clientes ativos quanto os inativos
+
+      this.tableContent.body = [];
+      this.buildTableBodyContent(filteredClientList);
+
+      this.$refs.sidebarClientFilter.close();
+    },
+
+    openSidebarFilterClient() {
+      this.$refs.sidebarClientFilter.show();
+    },
+
     showSuccessToast(message) {
       this.toast = {
         type: "success",
@@ -155,22 +141,22 @@ export default {
     },
 
     buildBodyItem(client) {
-      const name = client.tradeName;
-      const planType = "-";
-      const status = "-";
-      const statusContent = "-";
-      const lastExport = "-";
-      const dueDate = "-";
+      const name = client.businessName;
+      // const planType = "-";
+      const status = client.isActive ? "active" : "inactive";
+      const statusContent = client.isActive ? "Ativo" : "Inativo";
+      const lastExport = client.nfLastExport ?? "-";
+      const dueDate = client.certificateNearestDueDate ?? "-";
 
       return [
         {
-          type: "checkbox",
+          type: "name",
           content: name,
         },
-        {
-          type: "text",
-          content: planType,
-        },
+        // {
+        //   type: "text",
+        //   content: planType,
+        // },
         {
           type: "status",
           status: status,
@@ -201,15 +187,20 @@ export default {
       this.isBusy = true;
 
       try {
-        const clientList = await getClientCompanyListService();
-        this.buildTableBodyContent(clientList);
+        const clientsResponse = await getClientCompanyListService();
+
+        if (clientsResponse.data) {
+          const clientList = clientsResponse.data?.clientCompaniesData;
+          this.clientFullDataList = clientList;
+          this.buildTableBodyContent(clientList);
+        }
 
         this.isBusy = false;
       } catch (error) {
         this.isBusy = false;
         const errorMessage = error
           ? error
-          : "Não foi possível resgatar os clientes. Entre em contato ou tente novamente mais tarde.";
+          : "Não foi possível resgatar os clientes. Tente novamente mais tarde.";
 
         this.showErrorToast(errorMessage, "Falha ao buscar certificados");
       }
@@ -217,8 +208,15 @@ export default {
 
     openClient(index) {
       this.$router.push({
-        name: "create-service",
-        query: { clientId: this.clientFullDataList[index].cnpj },
+        name: "client",
+        params: { id: this.clientFullDataList[index].cpfCnpj },
+      });
+    },
+
+    editClient(index) {
+      this.$router.push({
+        name: "company-data",
+        params: { id: this.clientFullDataList[index].cpfCnpj },
       });
     },
   },

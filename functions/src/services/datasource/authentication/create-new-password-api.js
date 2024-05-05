@@ -82,9 +82,6 @@ module.exports = {
       //   if (newPassword === userRecord.password) {
       //     throw new Error("A nova senha não pode ser a mesma que a anterior.");
       //   }
-
-      console.log("--- newPassword", newPassword);
-
       const decryptedPassword = decrypt(newPassword);
 
       // Atualizar a senha do usuário no Firebase

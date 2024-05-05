@@ -1,0 +1,153 @@
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  z-index: 997;
+
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  &.sidebar-overlay--visible {
+    display: block;
+    opacity: 1;
+  }
+}
+
+.sidebar-filter {
+  width: to-rem(335px);
+  height: 100%;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  z-index: 998;
+
+  background-color: palette("white");
+
+  padding: to-rem(46px) to-rem(30px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  transition: 0.3s ease;
+  transform: translateX(-335px);
+
+  &.sidebar-filter--visible {
+    transform: translateX(0);
+  }
+
+  h4 {
+    color: #4b4b4b;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+
+    margin-top: to-rem(46px);
+    margin-bottom: to-rem(22px);
+  }
+
+  .input-field {
+    margin-bottom: 1rem;
+  }
+
+  .sidebar-filter__wrapper {
+    width: 100%;
+    height: calc(100% - 20px);
+    display: block;
+  }
+
+  .sidebar-filter__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    max-width: 100%;
+
+    a {
+      display: block;
+    }
+  }
+
+  .sidebar-filter__list {
+    display: flex;
+    max-width: 100%;
+    flex-direction: column;
+    max-height: calc(100% - 150px);
+    overflow: auto;
+
+    & > li {
+      margin-bottom: 0.5rem;
+    }
+
+    li {
+      width: 100%;
+      display: inline-block;
+
+      color: #3d3d3d;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+
+    .letter {
+      color: #295aaa;
+      font-size: 14px;
+      font-weight: bold;
+
+      line-height: 100%;
+
+      display: inline-block;
+    }
+
+    a {
+      color: #3d3d3d;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      padding: 9px 12px;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      width: 100%;
+
+      margin-top: 0.5rem;
+
+      display: block;
+
+      &:hover {
+        background-color: palette("blue", "light");
+      }
+    }
+  }
+
+  .sidebar-filter__footer {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .button {
+      margin-left: 1rem;
+    }
+  }
+}

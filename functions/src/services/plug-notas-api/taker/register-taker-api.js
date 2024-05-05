@@ -48,14 +48,20 @@ const apiServiceTitle = "REGISTER TAKER";
 
 module.exports = {
   async call(takerData) {
-    const { cnpj, businessName, municipalRegistration, address, phone, email } =
-      takerData;
+    const {
+      cpfCnpj,
+      businessName,
+      municipalRegistration,
+      address,
+      phone,
+      email,
+    } = takerData;
 
     try {
       const cityCode = await getCityCode(address.city);
 
       const requestBody = {
-        cpfCnpj: cnpj,
+        cpfCnpj,
         razaoSocial: businessName,
         endereco: {
           tipoBairro: separateNeighborhoodPrefix(address.neighborhood).type,

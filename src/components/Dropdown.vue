@@ -1,5 +1,9 @@
 <template>
-  <div class="dropdown" :class="[{ active: isActive }, classList]">
+  <div
+    class="dropdown"
+    :class="[{ active: isActive }, classList]"
+    ref="dropdown"
+  >
     <img
       src="@/assets/images/icons/ellipsis-vertical.svg"
       @click="toggleDropdown"
@@ -9,12 +13,17 @@
     </ul>
   </div>
 </template>
+
 <script>
 export default {
   name: "app-dropdown",
 
   props: {
-    classList: String,
+    classList: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
 
   data() {
@@ -24,21 +33,25 @@ export default {
   },
 
   mounted() {
-    const self = this;
-    document.addEventListener("click", function (event) {
-      const clicked = event.target;
-      const parent = clicked.parentElement;
-      if (!parent.classList.contains("dropdown")) {
-        self.isActive = false;
-      }
-    });
+    document.addEventListener("click", this.handleClickOutside);
+  },
+
+  beforeUnmount() {
+    document.removeEventListener("click", this.handleClickOutside);
   },
 
   methods: {
     toggleDropdown() {
       this.isActive = !this.isActive;
     },
+
+    handleClickOutside(event) {
+      if (!this.$refs.dropdown.contains(event.target)) {
+        this.isActive = false;
+      }
+    },
   },
 };
 </script>
+
 <style lang=""></style>

@@ -1,45 +1,70 @@
-const { query, collection, where, getDocs } = require("firebase/firestore");
-const { startOfDay, addDays } = require("date-fns");
+const { doc, getDoc } = require("firebase/firestore");
+const { addDays, isBefore } = require("date-fns");
 const config = require("../../../firebase/firebase-config");
 const errorHandler = require("../../../data/error-handler");
-const {
-  CLIENT_DIGITAL_CERTIFICATE_COLLECTION,
-} = require("../../../data/collections");
+const { CLIENT_COMPANIES_COLLECTION } = require("../../../data/collections");
 const validateRequest = require("../../common/validate-request");
 
 const apiServiceTitle = "GET EXPIRING DIGITAL CERTIFICATE LIST SERVICE";
 
+async function getExpiringCertificates(companyData) {
+  const currentDate = new Date();
+  const futureDate = addDays(currentDate, 15);
+
+  const expiringCertificates = [];
+
+  if (companyData.relatedCertificates) {
+    for (const certRef of companyData.relatedCertificates) {
+      const certDoc = await getDoc(certRef);
+
+      if (certDoc.exists()) {
+        const certData = certDoc.data();
+        const vencimento = new Date(
+          certData.plugNotasCertificateData.vencimento
+        );
+
+        // Verificar se a data de vencimento está dentro dos próximos 15 dias
+        if (isBefore(vencimento, futureDate)) {
+          expiringCertificates.push({
+            id: certDoc.id,
+            data: certData,
+          });
+        }
+      }
+    }
+  }
+
+  return expiringCertificates;
+}
+
 module.exports = {
   async call(req, res) {
     const { authorization: apiKey } = req.headers;
+
+    const { companyUid } = req.params;
 
     if (!validateRequest(apiKey)) {
       throw "unauthorized";
     }
 
     try {
-      // Obter a data atual
-      const currentDate = new Date();
-
-      // Calcular a data 15 dias no futuro
-      const futureDate = addDays(startOfDay(currentDate), 15);
-
-      // Formatar a data futura para comparação
-      const futureDateString = futureDate.toISOString();
-
-      // Fazer a consulta ao Firestore
-      const certificatesQuery = query(
-        collection(config.db, CLIENT_DIGITAL_CERTIFICATE_COLLECTION),
-        where("plugNotasCertificateData.vencimento", "<", futureDateString)
+      const companyReference = doc(
+        config.db,
+        CLIENT_COMPANIES_COLLECTION,
+        companyUid
       );
 
-      const querySnapshot = await getDocs(certificatesQuery);
+      const companySnapshot = await getDoc(companyReference);
 
-      let expiringCertificatesData = [];
+      let companyData;
 
-      querySnapshot.forEach((doc) => {
-        expiringCertificatesData.push(doc.data());
-      });
+      if (companySnapshot.exists()) {
+        companyData = companySnapshot.data();
+      } else {
+        throw "error/not-found";
+      }
+
+      let expiringCertificatesData = await getExpiringCertificates(companyData);
 
       const successMessage =
         "Busca de certificados expirando realizada com sucesso!";

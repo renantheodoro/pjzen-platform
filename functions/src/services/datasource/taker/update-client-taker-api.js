@@ -3,10 +3,10 @@ const { logApi } = require("../../../data/log-api");
 const { doc, updateDoc, serverTimestamp } = require("firebase/firestore");
 const errorHandler = require("../../../data/error-handler");
 const { CLIENT_TAKER_COLLECTION } = require("../../../data/collections");
-const { getCleanCNPJ } = require("../../../helpers/get-clean-cnpj");
+const { getCleanDocument } = require("../../../helpers/get-clean-document");
 const validateRequest = require("../../common/validate-request");
 const { decrypt } = require("../../common/encrypt");
-const updateTakerService = require("../../plug-notas-api/taker/update-taker-by-cnpj-api");
+const updateTakerService = require("../../plug-notas-api/taker/update-taker-by-document-api");
 
 const apiServiceTitle = "UPDATE CLIENT TAKER";
 
@@ -14,15 +14,14 @@ module.exports = {
   async call(req, res) {
     const { authorization: apiKey } = req.headers;
 
-    let { cnpj } = req.params;
-    let { businessName, address, phone, email } = req.body;
+    let { cpfCnpj, businessName, address, phone, email } = req.body;
 
-    let decryptedCNPJ;
+    let decryptedCpfCnpj;
 
     if (apiKey === process.env.API_KEY_DEV) {
-      decryptedCNPJ = cnpj;
+      decryptedCpfCnpj = cpfCnpj;
     } else {
-      decryptedCNPJ = decrypt(cnpj);
+      decryptedCpfCnpj = decrypt(cpfCnpj);
     }
 
     try {
@@ -30,7 +29,7 @@ module.exports = {
         throw "unauthorized";
       }
 
-      if (!decryptedCNPJ) {
+      if (!decryptedCpfCnpj) {
         throw "invalid-argument";
       }
 
@@ -39,11 +38,11 @@ module.exports = {
       const clientTakerReference = doc(
         config.db,
         CLIENT_TAKER_COLLECTION,
-        getCleanCNPJ(decryptedCNPJ)
+        getCleanDocument(decryptedCpfCnpj)
       );
 
       const takerData = {
-        cnpj: getCleanCNPJ(decryptedCNPJ),
+        cpfCnpj: getCleanDocument(decryptedCpfCnpj),
         businessName,
         address: {
           zipcode: address.zipcode,

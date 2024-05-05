@@ -5,20 +5,17 @@
       <input
         type="text"
         ref="autocompleteField"
-        :placeholder="placeholder"
-        @focusin="focusIn = true"
-        @input="$emit('input', $value)"
         v-model="currentValue"
+        :placeholder="placeholder"
+        :disabled="isDisabled"
+        @focusin="focusIn = true"
         @blur="$emit('blur')"
+        @input="updateValue"
       />
 
-      <img
-        src="@/assets/images/icons/search.svg"
-        class="input-field__icon"
-        @click="searchList"
-      />
+      <img src="@/assets/images/icons/search.svg" class="input-field__icon" />
 
-      <ul v-if="focusIn" class="autocomplete-list">
+      <ul v-if="focusIn && !isDisabled" class="autocomplete-list">
         <li
           v-for="(item, index) in filteredList"
           :key="index"
@@ -65,12 +62,27 @@ export default {
       type: String,
       required: true,
     },
+    currentData: {
+      type: String,
+      required: true,
+    },
+    isDisabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+
+  watch: {
+    currentData(newValue) {
+      this.currentValue = newValue;
+    },
   },
 
   data() {
     return {
       focusIn: false,
-      currentValue: null,
+      currentValue: this.currentData,
     };
   },
 
@@ -79,19 +91,24 @@ export default {
       if (this.currentValue === null || this.currentValue === "") {
         return this.itemList;
       }
-
-      return this.itemList.filter((item) =>
-        item.toLowerCase().includes(this.currentValue.toLowerCase())
+      return this.itemList.filter(
+        (item) =>
+          item.toLowerCase() === this.currentValue.toLowerCase() ||
+          item.toLowerCase().includes(this.currentValue.toLowerCase())
       );
     },
   },
 
   methods: {
-    selectItem(item) {
-      this.currentValue = item;
-      this.focusIn = false;
+    updateValue() {
+      // this.focusIn = false;
+      this.$emit("updateValue", this.currentValue);
+    },
 
-      this.$emit("onSelect", this.currentValue);
+    selectItem(itemSelected) {
+      this.currentValue = itemSelected;
+      this.focusIn = false;
+      this.$emit("selectItem", itemSelected);
     },
   },
 

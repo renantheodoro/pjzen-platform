@@ -7,7 +7,7 @@ export default async (data) => {
 
     // Validações dos campos dentro do objeto form
     if (!email || typeof email !== "string") {
-      throw new Error("O valor 'email' não é válido.");
+      throw "O valor 'email' não é válido.";
     }
 
     const response = await api().post("send-recovery-password-email", {

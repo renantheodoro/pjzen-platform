@@ -5,6 +5,7 @@
     title="Código incorreto"
     :text="serviceErrorMessage"
   />
+
   <Loader v-if="isBusy" />
 
   <form
@@ -29,6 +30,7 @@
       <div class="input-digits__item">
         <input
           @input="focusNext(1)"
+          @paste="handlePaste(1, $event)"
           ref="input-1"
           type="text"
           maxlength="1"
@@ -38,6 +40,7 @@
       <div class="input-digits__item">
         <input
           @input="focusNext(2)"
+          @paste="handlePaste(2, $event)"
           ref="input-2"
           type="text"
           maxlength="1"
@@ -47,6 +50,7 @@
       <div class="input-digits__item">
         <input
           @input="focusNext(3)"
+          @paste="handlePaste(3, $event)"
           ref="input-3"
           type="text"
           maxlength="1"
@@ -56,6 +60,7 @@
       <div class="input-digits__item">
         <input
           @input="focusNext(4)"
+          @paste="handlePaste(4, $event)"
           ref="input-4"
           type="text"
           maxlength="1"
@@ -65,6 +70,7 @@
       <div class="input-digits__item">
         <input
           @input="focusNext(5)"
+          @paste="handlePaste(5, $event)"
           ref="input-5"
           type="text"
           maxlength="1"
@@ -235,6 +241,23 @@ export default {
       }
     },
 
+    handlePaste(index, event) {
+      // Obtém o texto colado
+      const text = event.clipboardData.getData("text/plain");
+      // Divide o texto em caracteres
+      const chars = text.split("");
+
+      this.validationCodeForm.field1 = chars[0];
+      this.validationCodeForm.field2 = chars[1];
+      this.validationCodeForm.field3 = chars[2];
+      this.validationCodeForm.field4 = chars[3];
+      this.validationCodeForm.field5 = chars[4];
+
+      event.preventDefault();
+      // Move o foco para o próximo campo
+      this.focusNext(index + chars.length - 1);
+    },
+
     showError() {
       this.$refs.toastError.show();
       this.hasError = true;
@@ -258,7 +281,7 @@ export default {
       } catch (error) {
         this.serviceErrorMessage = error
           ? error
-          : "Não foi possível criar conta. Entre em contato ou tente novamente mais tarde.";
+          : "Não foi possível criar conta. Tente novamente mais tarde.";
         this.showError();
         this.stopTimer();
         this.hasSentEmail = false;
@@ -281,7 +304,7 @@ export default {
         } catch (error) {
           this.serviceErrorMessage = error
             ? error
-            : "Não foi possível criar conta. Entre em contato ou tente novamente mais tarde.";
+            : "Não foi possível criar conta. Tente novamente mais tarde.";
           this.showError();
         } finally {
           this.isBusy = false;

@@ -1,9 +1,19 @@
-import { setUserDataToLocalStorage } from "@/helpers/local-storage";
+import {
+  setAccountancyDataToLocalStorage,
+  setProfileDataToLocalStorage,
+  setUserSessionStorage,
+} from "@/helpers/local-storage";
 import { setTokenToSessionStorage } from "@/helpers/session-storage";
 import { errorLog } from "@/helpers/log";
 
 import { auth } from "@/services/config/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import getAccoutancyService from "./get-accountancy-service";
+import getProfileDataService from "./get-profile-data-service";
+import {
+  USER_SESSION_ACCOUNTANCY_TYPE,
+  USER_SESSION_PROFILE_TYPE,
+} from "@/data/const/user-session-type";
 
 const handleLogin = async function (email, password) {
   try {
@@ -42,27 +52,46 @@ export default async (data) => {
     const { email, password } = data;
 
     if (!email || typeof email !== "string") {
-      throw new Error("O campo 'email' é obrigatório e deve ser uma string.");
+      throw "O campo 'email' é obrigatório e deve ser uma string.";
     }
 
     if (!password || typeof password !== "string") {
-      throw new Error(
-        "O campo 'password' é obrigatório e deve ser uma string."
-      );
+      throw "O campo 'password' é obrigatório e deve ser uma string.";
     }
 
     const response = await handleLogin(email, password);
 
-    const { accessToken, emailVerified, uid, email: currentEmail } = response;
+    const { accessToken, uid } = response;
 
-    const currentUserData = {
+    const userSession = {
+      email,
+      accessToken,
       uid,
-      emailVerified,
-      email: currentEmail,
     };
 
-    setUserDataToLocalStorage(currentUserData);
     setTokenToSessionStorage(accessToken);
+
+    setAccountancyDataToLocalStorage("");
+    setProfileDataToLocalStorage("");
+    setUserSessionStorage("");
+
+    try {
+      const accountancyResponse = await getAccoutancyService(uid);
+      setAccountancyDataToLocalStorage(accountancyResponse.data);
+      userSession.sessionType = USER_SESSION_ACCOUNTANCY_TYPE;
+    } catch (error) {
+      const profileAccount = await getProfileDataService(uid);
+      console.log("profileAccount", profileAccount);
+      if (!profileAccount.data.isActive) {
+        throw "Usuário sem permissão de entrar";
+      }
+
+      setAccountancyDataToLocalStorage(profileAccount.data.accountancyData);
+      setProfileDataToLocalStorage(profileAccount.data);
+      userSession.sessionType = USER_SESSION_PROFILE_TYPE;
+    }
+
+    setUserSessionStorage(userSession);
 
     return response.data;
   } catch (error) {

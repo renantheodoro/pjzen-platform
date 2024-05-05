@@ -1,8 +1,5 @@
 import api from "@/services/config/api";
-import {
-  setAccountancyDataToLocalStorage,
-  setUserDataToLocalStorage,
-} from "@/helpers/local-storage";
+import { setAccountancyDataToLocalStorage } from "@/helpers/local-storage";
 import { errorLog } from "@/helpers/log";
 import { encrypt } from "@/helpers/encrypt";
 
@@ -66,30 +63,35 @@ export default async (data) => {
     }
 
     const encryptedPassword = encrypt(password);
-    const encryptedCNPJ = encrypt(cnpj);
+    const encryptedCnpj = encrypt(cnpj);
 
     data.password = encryptedPassword;
-    data.cnpj = encryptedCNPJ;
+    data.cnpj = encryptedCnpj;
 
-    const userData = {
+    const accountancyData = {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
       password: encryptedPassword,
       phone: data.phone,
       company: data.company,
-      cnpj: encryptedCNPJ,
+      cpfCnpj: encryptedCnpj,
       clientsNumber: data.clientsNumber,
       serviceType: data.serviceType,
+    };
+
+    const response = await api().post("create-accountancy", accountancyData);
+
+    if (response?.data?.data?.accountancyData) {
+      setAccountancyDataToLocalStorage(response.data.data.accountancyData);
+    } else {
+      throw "Ocorreu um erro ao salvar localmente os dados da contabilidade";
     }
-
-    const response = await api().post("create-accountancy", userData);
-
-    setUserDataToLocalStorage(response.data.data.accountancyData);
-    setAccountancyDataToLocalStorage(response.data.data.accountancyData);
 
     return response;
   } catch (error) {
+    console.error("error", error);
+
     let errorMessage = error?.response?.data?.message;
 
     if (!errorMessage) {

@@ -6,7 +6,12 @@
   ></div>
   <div
     :key="modalKey"
-    :class="{ active: isModalOpen, 'modal--center': textCenter }"
+    :class="{
+      active: isModalOpen,
+      'modal--center': textCenter,
+      'modal--form': modalForm,
+      'modal--popup': modalPopup,
+    }"
     ref="modal"
     class="modal card"
   >
@@ -18,6 +23,14 @@ export default {
   name: "app-modal",
 
   props: {
+    modalForm: {
+      type: Boolean,
+      default: false,
+    },
+    modalPopup: {
+      type: Boolean,
+      default: false,
+    },
     textCenter: {
       type: Boolean,
       default: false,

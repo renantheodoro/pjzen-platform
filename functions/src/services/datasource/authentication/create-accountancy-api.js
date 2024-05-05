@@ -12,7 +12,7 @@
  * - password: Senha para autenticação do usuário.
  * - phone: Número de telefone da contabilidade.
  * - company: Nome da empresa de contabilidade.
- * - cnpj: CNPJ da empresa de contabilidade (criptografado).
+ * - cpfCnpj: Documento da empresa de contabilidade (criptografado).
  * - clientsNumber: Número de clientes atendidos pela contabilidade.
  * - serviceType: Tipo de serviço oferecido pela contabilidade.
  *
@@ -23,7 +23,7 @@
  * - email: Endereço de e-mail associado à contabilidade.
  * - phone: Número de telefone da contabilidade.
  * - company: Nome da empresa de contabilidade.
- * - cnpj: CNPJ da empresa de contabilidade (limpo, sem formatação).
+ * - cpfCnpj: Documento da empresa de contabilidade (limpo, sem formatação).
  * - clientsNumber: Número de clientes atendidos pela contabilidade.
  * - serviceType: Tipo de serviço oferecido pela contabilidade.
  * - createdAt: Data e hora de criação do registro no banco de dados.
@@ -36,7 +36,7 @@
  * - Logs: Todas as ações do serviço são registradas por meio do módulo 'logApi'.
  * - Erros: Em caso de falha, o serviço utiliza o módulo 'errorHandler' para gerar uma resposta adequada.
  *
- * Nota: O CNPJ é criptografado durante a transmissão e armazenamento, sendo limpo antes de ser persistido no banco de dados.
+ * Nota: O documento é criptografado durante a transmissão e armazenamento, sendo limpo antes de ser persistido no banco de dados.
  *
  * Exemplo de Uso:
  * ```
@@ -49,7 +49,7 @@
  *   password: 'securePassword',
  *   phone: '+123456789',
  *   company: 'ABC Contabilidade',
- *   cnpj: 'encryptedCnpjString',
+ *   cpfCnpj: 'encryptedCpfCnpjString',
  *   clientsNumber: 50,
  *   serviceType: 'Consultoria Fiscal'
  * }
@@ -62,7 +62,7 @@ const { logApi } = require("../../../data/log-api");
 const { doc, setDoc, serverTimestamp } = require("firebase/firestore");
 const errorHandler = require("../../../data/error-handler");
 const { ACCOUNTANCIES_COLLECTION } = require("../../../data/collections");
-const { getCleanCNPJ } = require("../../../helpers/get-clean-cnpj");
+const { getCleanDocument } = require("../../../helpers/get-clean-document");
 const validateRequest = require("../../common/validate-request");
 const { decrypt } = require("../../common/encrypt");
 
@@ -91,23 +91,26 @@ module.exports = {
       password,
       phone,
       company,
-      cnpj,
+      cpfCnpj,
       clientsNumber,
       serviceType,
     } = req.body;
 
     const decryptedPassword = decrypt(password);
-    const decryptedCNPJ = decrypt(cnpj);
+    const decryptedCpfCnpj = decrypt(cpfCnpj);
 
     try {
       logApi(apiServiceTitle, "Iniciando cadastro de usuário...");
 
-      const userData = await createAuthentication(email, decryptedPassword);
+      const authenticationData = await createAuthentication(
+        email,
+        decryptedPassword
+      );
 
       logApi(
         apiServiceTitle,
         "Cadastro de usuário realizado com sucesso!",
-        userData
+        authenticationData
       );
 
       logApi(
@@ -116,13 +119,13 @@ module.exports = {
       );
 
       const accountancyData = {
-        uid: userData.uid,
+        uid: authenticationData.uid,
         firstName,
         lastName,
         email,
         phone,
         company,
-        cnpj: getCleanCNPJ(decryptedCNPJ),
+        cpfCnpj: getCleanDocument(decryptedCpfCnpj),
         clientsNumber,
         serviceType,
         createdAt: serverTimestamp(),
@@ -130,12 +133,12 @@ module.exports = {
       };
 
       await setDoc(
-        doc(config.db, ACCOUNTANCIES_COLLECTION, userData.uid),
+        doc(config.db, ACCOUNTANCIES_COLLECTION, authenticationData.uid),
         accountancyData
       );
 
       const response = {
-        userData,
+        authenticationData,
         accountancyData,
       };
 

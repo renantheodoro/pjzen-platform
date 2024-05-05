@@ -95,8 +95,23 @@
 
         padding: to-rem(12px) 0;
 
-        &:not(:last-of-type) {
-          border-bottom: 1px solid #eee;
+        // &:not(:last-of-type) {
+        border-bottom: 1px solid #eee;
+        // }
+      }
+
+      .body-item--name {
+        max-width: to-rem(320px);
+        line-height: 120%;
+      }
+
+      &.table-section__table--profiles {
+        thead th:last-of-type {
+          text-align: right;
+        }
+
+        .button-action {
+          margin-left: 1rem;
         }
       }
     }
