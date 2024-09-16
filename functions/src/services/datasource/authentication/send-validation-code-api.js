@@ -67,13 +67,13 @@ module.exports = {
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: "renan.b.theodoro@gmail.com", // TODO: adicionar o e-mail real
-          pass: "gsle zfwh kflu usmw", // TODO: adicionar o password real
+          user: process.env.NODE_MAILER_EMAIL,
+          pass: process.env.NODE_MAILER_PASS,
         },
       });
 
       const mailOptions = {
-        from: "pjzen@email.com",
+        from: process.env.NODE_MAILER_EMAIL,
         to: email,
         subject: "Código de Verificação",
         text: `

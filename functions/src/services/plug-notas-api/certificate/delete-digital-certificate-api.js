@@ -16,8 +16,6 @@ module.exports = {
         }
       );
 
-      // TODO: integrar com o firebase (salvar dados no banco)
-
       if (response?.data?.data?.id) {
         // res.status(response.status).send({
         //   status: response.status,

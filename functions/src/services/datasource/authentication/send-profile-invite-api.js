@@ -70,13 +70,13 @@ module.exports = {
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: "renan.b.theodoro@gmail.com", // TODO: Adicionar o e-mail real
-          pass: "gsle zfwh kflu usmw", // TODO: Adicionar a senha real
+          user: process.env.NODE_MAILER_EMAIL,
+          pass: process.env.NODE_MAILER_PASS,
         },
       });
 
       const mailOptions = {
-        from: "pjzen@email.com",
+        from: process.env.NODE_MAILER_EMAIL,
         to: email,
         subject: "Convite de colaboração",
         html: `

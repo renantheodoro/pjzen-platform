@@ -130,8 +130,6 @@ export default {
       const date = getMonthYearByTimestamp(nf.createdAt);
       const status = getPtStatusByNfStatus(nf.status)?.status;
 
-      // TODO: adicionar o status correto:
-      // "Importada automaticamente" | "Cancelada" | "Concluída"
       const statusContent = getPtStatusByNfStatus(nf.status)?.content;
 
       return [

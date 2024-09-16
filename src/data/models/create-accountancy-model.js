@@ -66,10 +66,7 @@ export default {
     };
   },
 
-  mounted() {
-    // TODO: comentar
-    // this.form = this.mockData();
-  },
+  mounted() {},
 
   methods: {
     mockData() {
